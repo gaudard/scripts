@@ -1,7 +1,8 @@
 #!/bin/bash
 
-#### created by @jgaudard
-#### for educational use only
+### created by @jgaudard
+### for educational use only
+### Version 1.0
 
 #default values set
 EXPLOIT="windows/smb/ms08_067_netapi"
