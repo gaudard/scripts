@@ -1,4 +1,11 @@
 #!/usr/bin/python
+
+### Created by @jgaudard
+### For educational use only
+### Version 0.9
+
+
+
 import socket as sk
 import subprocess, shlex
  
