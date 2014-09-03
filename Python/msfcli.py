@@ -58,7 +58,11 @@ autopwn(targets)
 ### Examples ###
 ### Use multiple scanner and autopwn modules to scan and pwn more!
 '''
-scanner(net, 16, 24)
+scanner(net, 1, 10)
+autopwn(targets)
+scanner(net, 11, 50)
+autopwn(targets)
+scanner(net, 51, 254)
 autopwn(targets)
 scanner('172.16.175', netStart, netStop)
 autopwn(targets)
