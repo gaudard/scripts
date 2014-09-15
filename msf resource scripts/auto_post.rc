@@ -1,5 +1,5 @@
 #######################################################
-# Created by me
+# Created by @jgaudard
 # Uses mubix's run_all_post.rc resource file to run multiple
 # post exploitation scripts against all sessions.
 # Created: 15 September 2014    Edited: 15 September 2014
