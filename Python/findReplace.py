@@ -6,9 +6,13 @@ import re
 print '[+] Doing things!'
 
 ### Opens files, sets variables
+
 sids = open("userAndSID.txt","r+")
+
+'''
 perms = open('permissions','r+')
 newperms = open('updatedPermissions','w+')
+'''
 
 replacements = {}
 
@@ -17,20 +21,21 @@ for line in sids:
 	user, sid = line.split('\t')
 	replacements.update({sid.rstrip():user.rstrip()})
 
-
-
-for x in perms.readlines():
-	for ruser, rsid  in replacements.items():
-		line = line.replace(rsid, ruser)
-	newperms.write(line)
+with open('updatedPermissions','w+') as fout:
+	with open('permissions','r+') as fin:
+		for line in fin:
+			print "[+] looking through the file"
+			for key, value in replacements.iteritems():
+				print "[+] now we are in the list of user and sids"
+				fout.write(line.replace(key, value))
 
 
 
 #### Closes files ####
 
 sids.close()
-perms.close()
-newperms.close()
+fin.close()
+fout.close()
 
 
 #### Failed Code ####
