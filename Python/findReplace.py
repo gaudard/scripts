@@ -6,6 +6,7 @@ import re
 print '[+] Doing things!'
 
 ### Opens files, sets variables
+### REGEX for SIDs: S-\d-\d-\d+-\d+-\d+-\d+-\w+
 
 sids = open("userAndSID.txt","r+")
 
