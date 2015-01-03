@@ -1,19 +1,46 @@
 #!/usr/bin/python
-# Simple port scanner, version 1.0
-# Source code: http://www.pythonforbeginners.com/code-snippets-source-code/port-scanner-in-python
+# Simple port scanner, version 2.0
 
-
-host='74.207.244.221' # scanme.nmap.org
-
+print "[+] Starting port scanner...\n"
 import socket
 
-for port in range(10,100):
-	try:
-		sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		sock.settimeout(1)
-		result = sock.connect_ex((host, port))
-		if result == 0:
-			print "Port {}: \t Open".format(port)
-		sock.close
-	except: continue
+
+issubnet = input("If you wish to scan a subnet, enter 1: ")
+
+if issubnet == 1:
+	network = raw_input("Enter the network: ")
+	hoststart = input("Enter the host start: ")
+	hostend = input("Enter the host end: ")
+
+	for host in range(hoststart, hostend):
+		target = network + "." + str(host)
+		print "\n[*] Scanning host {}.{}".format(network, host)
+		print "[+] Scanning ports 1 through 1024\n"
+		for port in range(1,1024):
+			try:
+				sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+				sock.settimeout(500)
+				result = sock.connect_ex((target, port))
+				if result == 0:
+					print "Port {}: \t Open".format(port)
+				sock.close
+			except: continue		
+	
+else:
+	target = raw_input("Enter a single ip or fqdn: ")
+	print "[+] Scanning ports 1 through 1024\n"
+	for port in range(1,1024):
+		try:
+			sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			sock.settimeout(500)
+			result = sock.connect_ex((target, port))
+			if result == 0:
+				print "Port {}: \t Open".format(port)
+			sock.close
+		except: continue
+
+
+
+
+
 
