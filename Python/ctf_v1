@@ -1,0 +1,39 @@
+#!/usr/bin/python
+
+# Work in progress. Generate random number for a random high port then
+# set an IP address based on hostname (target1, target2, target3, ect...)
+# Use random port to set sshd to run using that port, to require nmap scan
+# to find ssh port.
+
+
+#Generate a random number
+from random import randint
+
+port = randint(1024,65535)
+
+print port
+
+
+# Get hostname
+import socket
+print(socket.gethostname())
+
+
+# Set IP address
+# http://stackoverflow.com/questions/20420937/how-to-assign-ip-address-to-interface-in-python
+
+import socket, struct, fcntl
+
+SIOCSIFADDR = 0x8916
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+def setIpAddr(iface, ip):
+	bin_ip = socket.inet_aton(ip)
+	ifreq = struct.pack('16sH2s4s8s', iface, socket.AF_INET, '\x00'*2, bin_ip, '\x00'*8)
+	fcntl.ioctl(sock, SIOCSIFADDR, ifreq)
+
+setIpAddr('em1', '192.168.0.1')
+
+
+
