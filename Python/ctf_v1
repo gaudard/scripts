@@ -6,7 +6,9 @@
 # to find ssh port.
 
 
-#Generate a random number
+# Generate a random number
+# http://www.liquidweb.com/kb/changing-the-ssh-port/
+
 from random import randint
 
 port = randint(1024,65535)
