@@ -21,7 +21,7 @@ import csv, time
 PROBE_REQUEST_TYPE=0
 PROBE_REQUEST_SUBTYPE=4
 
-WHITELIST = ['ba:dd:ec:af:be:ef'] # Replace this with your phone's MAC address
+WHITELIST = ['de:ad:be:ef:ca:fe'] # Replace this with your phone's MAC address
 
 def PacketHandler(pkt):
     if pkt.haslayer(Dot11):
@@ -42,23 +42,40 @@ def PrintPacket(pkt):
         reader=csv.reader(read, delimiter=',')
         for row in reader:
             if pkt.addr2 == row[0]:
-                count=1
+                themacexist=1
                 break
             else:
-                count=0
+                themacexist=0
         read.close()
-    if count == 0:
-        with open('logphones.csv','ab') as out:
-            w=csv.writer(out)
-            w.writerow([pkt.addr2,signal_strength,datetime.now().strftime('%Y-%m-%d'),datetime.now().strftime('%H:%M'),'blank','blank','blank','blank',pkt.getlayer(Dot11ProbeReq).info])
-            print "Count=%d MAC: %s SSID: %s RSSi: %d"%(count,pkt.addr2,pkt.getlayer(Dot11ProbeReq).info,signal_strength)
-            out.close()
+    if themacexist==1:
+        EditExisting(pkt)
+    elif themacexist==0:
+        WriteNew(pkt,signal_strength)
+    else:
+        print "error"
+
+def WriteNew(pkt,signal_strength):
+    with open('logphones.csv','ab') as out:
+        w=csv.writer(out)
+        w.writerow([pkt.addr2,signal_strength,datetime.now().strftime('%Y-%m-%d'),datetime.now().strftime('%H:%M'),'blank','blank','blank','blank',pkt.getlayer(Dot11ProbeReq).info])
+        print "MAC: %s SSID: %s"%(pkt.addr2,pkt.getlayer(Dot11ProbeReq).info)
+        out.close()
+
+def EditExisting(pkt):
+    return
+    '''
+    reader = csv.reader(open('logphones.csv','rb'))
+    writer = csv.writer(open('logphones.csv','wb'))
+    for row in reader:
+        if pkt.addr2 == row[0]:
+            if not pkt.getlayer(Dot11ProbeReq).info in row[10:]:
+                print "ssid is not in csv"
+    '''
 
 def main():
     print "[%s] Starting scan"%datetime.now()
     print "Scanning..."
     sniff(iface=sys.argv[1],prn=PacketHandler,store=0)
-
 if __name__=="__main__":
     main()
-   
+
