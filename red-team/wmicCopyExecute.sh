@@ -8,8 +8,9 @@
 #################################################
 
 clear
-which winexe || echo "You need winexe to run this script"
-which mount.cifs || echo "You need mount.cifs to run this script, apt-get install cifs-utils to install"
+echo "Checking dependencies...."
+which winexe 1> /dev/nul || echo "You need winexe to run this script"
+which mount.cifs 1> /dev/nul || echo "You need mount.cifs to run this script, apt-get install cifs-utils to install" 
 sleep 5
 clear
 echo "     Menu     "
@@ -69,7 +70,7 @@ elif [ $menu == 3 ]; then
 	echo "Enter the subnet, ie 192.168.1 or 172.16.5"
 	read -p ": " subnet
 	for ip in {43..66}; do
-		ping -c 1 $subnet.$ip || continue
+		ping -c 1 $subnet.$ip 1> /dev/nul || continue
 		mount.cifs //$subnet.$ip/C$ /mnt/targetdrive -o user="$username",password="$password"
         	cp $lpath/$binary /mnt/targetdrive/windows/temp 
 	        winexe -U "$username%$password" //$subnet.$ip ipconfig
