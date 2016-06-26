@@ -11,15 +11,25 @@ clear
 echo "Checking dependencies...."
 which winexe 1> /dev/nul || echo "You need winexe to run this script"
 which mount.cifs 1> /dev/nul || echo "You need mount.cifs to run this script, apt-get install cifs-utils to install" 
-sleep 5
+sleep 2
 clear
-echo "     Menu     "
-echo "How are you selecting targets?`echo $'\n '`"
-echo "   Exit... I'm a noob. (0)"
-echo "   One shot wonder. (1)"
-echo "   Multiple. (2)"
-echo "   Entire subnet. (3)"
-read -p ": " menu
+
+cat << "EOF"
+                    _          _         _          ___  __    __    __
+__      ___ __ ___ (_) ___    /_\  _   _| |_ ___   / _ \/ / /\ \ \/\ \ \
+\ \ /\ / / '_ ` _ \| |/ __|  //_\\| | | | __/ _ \ / /_)/\ \/  \/ /  \/ /
+ \ V  V /| | | | | | | (__  /  _  \ |_| | || (_) / ___/  \  /\  / /\  /
+  \_/\_/ |_| |_| |_|_|\___| \_/ \_/\__,_|\__\___/\/       \/  \/\_\ \/
+
+EOF
+
+echo "### Menu ###`echo $'\n '`"
+echo "Select from menu:`echo $'\n '`"
+echo "0) Exit please, I messed something up"
+echo "1) Single target"
+echo "2) Multiple targets"
+echo "3) Entire Class C"
+read -p "WAP> " menu
 clear
 
 if [ $menu == 0 ]; then
