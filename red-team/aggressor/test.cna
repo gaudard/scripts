@@ -12,3 +12,11 @@ on beacon_output_ls {
                 }
         }
 }
+
+## https://github.com/kussic/CS-KickassBot/blob/master/kickassbot.cna
+bnote("$1", mynick() . " - Init Completed \[" . formatDate("yyyy.MM.dd HH:mm:ss z") . "\]");
+
+alias supernote {
+        $old = beacon_info($1, 'note');
+        bnote($1, "$2 -- $old");
+}
