@@ -42,8 +42,8 @@ popup beacon_bottom {
         }        
 	}
   	menu "Lulz" {
-        item "IE Kiosk Popup" {  ## defaults to mcdonalds job
-            prompt_text("What site do you want to pop up?", "https://my.peoplematter.com/mja/USMCD1000890140/jobapp/GetStarted?jobOpenings=5d1ee9c9-3700-4183-a7bd-a6a90148784d&refererUrl=https://restaurantjobs.mcdonalds.com/", lambda({
+        item "IE Kiosk Popup" {  ## defaults to mcdonalds job, recommend url shortening
+            prompt_text("What site do you want to pop up?", "bit.ly/2noJ1YP", lambda({
                 binput(@ids,"C:\\Progra~1\\Intern~1\\iexplore.exe -k $1");
                 bshell(@ids, "C:\\Progra~1\\Intern~1\\iexplore.exe -k $1");
             }, @ids => $1));
