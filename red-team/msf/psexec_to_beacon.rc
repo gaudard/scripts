@@ -1,9 +1,10 @@
 ################################################
 # Modified by @jgaudard  :: I don't twitter much
-# Copied from some guy at NCCCDC
-# Resource file for metasploit
+# Resource file for metasploit.
+# Copied from nodocify at NCCCDC, modified to match
+# my other psexec resource script.
 # Use with cobaltstrike's beacon
-# Created: 2 April 2017    Edited: 2 April 2017
+# Created: 2 April 2017    Edited: 3 April 2017
 # Version 1.0
 #################################################
 
