@@ -1,1 +1,5 @@
-I'm going to clean this up this weekend!
+Scripts I've written or modified.
+
+The folders bash, batch, html, powershell, and python are self explanitory. They are mosty admin type tasks.
+
+The folders for blue and red teams are for CND and CNO. In the red-team folder are metasploit scripts and cobaltstrike's aggressor scripts.
