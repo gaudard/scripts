@@ -1,0 +1,22 @@
+#################################################
+# Created by @jgaudard  :: I don't twitter much
+# Aggressor script with admin actions
+# Created: 2 April 2017 
+# Version 0.1
+#
+# References: 
+########################################
+
+##netsh interface portproxy add v4tov4 listenport=4450 connectport=445 connectaddress=133.7.150.150
+
+alias netshadd {
+	bshell($1, "netsh interface portproxy add v4tov4 listenport=$2 connectaddress=$3 connectport=$4");
+}
+
+alias netshdel {
+	bshell($1, "netsh interface portproxy delete v4tov4 listenport=$2");
+}
+
+alias netshshow {
+	bshell($1, "netsh interface portproxy show v4tov4 all");
+}
