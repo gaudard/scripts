@@ -1,12 +1,17 @@
 @ECHO off
 REM #################################################
 REM # Created by @jgaudard  :: I don't twitter much 
-REM # Modified by noone
 REM # SECURE mgmt systems
-REM # Created: 14 June 2016    Edited: never
-REM # Version 0.1
+REM # Created: 14 June 2016    Edited: 1 May 2017
+REM # Version 0.9
 REM #################################################
+REM ### features to add/update
+REM 1. check for workgroup/domain
+REM 2. check local admin creds
+REM 3. options for what to allow
+REM 4. block powershell
 
+echo remove this system from the domain
 
 REM initial setup
 REM To Disable Group Policy:
@@ -19,25 +24,22 @@ netsh advfirewall set allprofiles state on
 netsh advfirewall firewall delete rule name=all
 
 REM deny all
-netsh advfirewall set domainprofile firewallpolicy blockinbound,blockoutbound
-netsh advfirewall set privateprofile firewallpolicy blockinbound,blockoutbound
-netsh advfirewall set publicprofile firewallpolicy blockinbound,blockoutbound
-netsh advfirewall set currentprofile firewallpolicy blockinbound,blockoutbound
+netsh advfirewall set allprofiles firewallpolicy blockinbound,blockoutbound
 
 REM ### Allows active directory and exchange communication, directly from host to ip of server. ###
-netsh advfirewall firewall add rule name="DC Comms TCP Ports" dir=out action=allow protocol=TCP remoteport=389,636,3268,3269,88,53,445,25,135,5722,464,9389,139 remoteip=1.2.3.4
-netsh advfirewall firewall add rule name="DC Comms TCP Ports" dir=in action=allow protocol=TCP remoteport=389,636,3268,3269,88,53,445,25,135,5722,464,9389,139 remoteip=1.2.3.4
+REM netsh advfirewall firewall add rule name="Domain Comms - TCP - outbound" dir=out action=allow protocol=TCP remoteport=389,636,3268,3269,88,53,445,25,135,5722,464,9389,139 remoteip=1.2.3.4
+REM netsh advfirewall firewall add rule name="Domain Comms - TCP - inbound " dir=in action=allow protocol=TCP remoteport=389,636,3268,3269,88,53,445,25,135,5722,464,9389,139 remoteip=1.2.3.4
 
-netsh advfirewall firewall add rule name="DC Comms UDP Ports" dir=out action=allow protocol=UDP remoteport=389,88,53,445,123,464,138,67,2535,137 remoteip=1.2.3.4
-netsh advfirewall firewall add rule name="DC Comms UDP Ports" dir=in action=allow protocol=UDP remoteport=389,88,53,445,123,464,138,67,2535,137 remoteip=1.2.3.4
+REM netsh advfirewall firewall add rule name="Domain Comms - UDP - outbound" dir=out action=allow protocol=UDP remoteport=389,88,53,445,123,464,138,67,2535,137 remoteip=1.2.3.4
+REM netsh advfirewall firewall add rule name="Domain Comms - UDP - inbound" dir=in action=allow protocol=UDP remoteport=389,88,53,445,123,464,138,67,2535,137 remoteip=1.2.3.4
 
-netsh advfirewall firewall add rule name="Exchange COMS" dir=out action=allow protocol=TCP remoteport=443,80,143,993,110,995,587 remoteip=1.2.3.4
-netsh advfirewall firewall add rule name="Exchange COMS" dir=in action=allow protocol=TCP remoteport=443,80,143,993,110,995,587 remoteip=1.2.3.4
+REM netsh advfirewall firewall add rule name="Exchange Comms - TCP - outbound" dir=out action=allow protocol=TCP remoteport=443,80,143,993,110,995,587 remoteip=1.2.3.4
+REM netsh advfirewall firewall add rule name="Excange Comms - TCP - inbound" dir=in action=allow protocol=TCP remoteport=443,80,143,993,110,995,587 remoteip=1.2.3.4
 
-REM ### No Strike List ###     Best to include multiple comma seperated ips to decrese number of rules: 1.2.3.4,10.11.12.13,100.10.100.10
+REM ## No Strike List, save to nostrike.txt and run from same dir as firewall.bat (or use absolute path). These will probably include any management websites.
 FOR /F %%G in (nostrike.txt) DO (
-    netsh advfirewall firewall add rule name="Allow NO STRIKE IPs" dir=out action=allow remoteip=%%G
-    netsh advfirewall firewall add rule name="Allow NO STRIKE IPs" dir=in action=allow remoteip=%%G
+    netsh advfirewall firewall add rule name="No Strike List - outbound" dir=out action=allow remoteip=%%G
+    netsh advfirewall firewall add rule name="No Strike List - inbound" dir=in action=allow remoteip=%%G
 )
 
 REM ## allow rules, must remove "REM" to enable rule."
@@ -47,10 +49,7 @@ REM netsh advfirewall firewall add rule name="SMB" dir=out action=allow protocol
 REM netsh advfirewall firewall add rule name="website dir=out action=allow protocol=tcp remoteport=443 remoteip=1.2.3.4
 
 REM enable logging
-netsh advfirewall set domainprofile logging droppedconnections enable
-netsh advfirewall set publicprofile logging droppedconnections enable
-netsh advfirewall set privateprofile logging droppedconnections enable
-
+netsh advfirewall set allprofiles logging droppedconnections enable
 
 
 REM NOTES  This will allow you to "mask" your password when prompted.
