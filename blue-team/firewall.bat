@@ -61,7 +61,10 @@ FOR /F %%G in (nostrike.txt) DO (
     netsh advfirewall firewall add rule name="No Strike List - inbound" dir=in action=allow remoteip=%%G
 )
 
-
+REM ## Specific Blocking Rules ##
+REM Comment these out if you are going to be using powershell and/or the command prompt.
+netsh advfirewall firewall add rule name="Powershell" dir=out action=block program="%SystemRoot%\system32\WindowsPowerShell\v1.0\powershell.exe"
+netsh advfirewall firewall add rule name="Command Prompt" dir=out action=block program="%SystemRoot%\system32\cmd.exe"
 
 REM ## allow rules, must remove "REM" to enable rule."
 REM netsh advfirewall firewall add rule name="RDP" dir=out action=allow protocol=TCP remoteport=3389
