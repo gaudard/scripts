@@ -11,6 +11,18 @@ REM 2. check local admin creds
 REM 3. options for what to allow
 REM 4. block powershell
 
+:: ###################################################
+::             Instructions for use:
+:: 1. Remove the system from the domain.
+:: a. You will need to know the local administrator password.
+:: 2. Edit the script for your use.
+:: a. Find the !!! Edit below !!! line an edit accordingly.
+:: b. Add no-strike systems. This should be a minimal list.
+:: 3. Run the script.
+:: a. It will save the firewall before making changes. To revert:
+:: b. netsh advfirewall import c:\windows\temp\firewallbak.wfw
+:: ###################################################
+
 echo ------------------------------------------------------
 echo This will setup a very hardened firewall.
 echo You should have removed the system from the domain, 
@@ -36,9 +48,9 @@ echo Enabling logging
 netsh advfirewall set allprofiles logging droppedconnections enable
 
 
-:: ################
+:: !!!!!!!! EDIT Below !!!!!!!!!!!!
 :: No Strike List, save to nostrike.txt and run from same dir as firewall.bat (or use absolute path). These will probably include any management websites.
-:: ################
+:: 
 echo ------------------------------------------------------
 echo Setting up nostrike list, you must have run this from the same directory
 echo where nostrike.txt exists with the list of ip addresses.
