@@ -45,6 +45,7 @@ echo Blocking all inbound and outbound traffic.
 netsh advfirewall set allprofiles firewallpolicy blockinbound,blockoutbound
 
 echo Enabling logging
+REM %windir%\system32\logfiles\firewall\pfirewall.log
 netsh advfirewall set allprofiles logging droppedconnections enable
 
 
