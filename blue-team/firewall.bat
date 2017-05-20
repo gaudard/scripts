@@ -2,8 +2,8 @@
 REM #################################################
 REM # Created by @jgaudard  :: I don't twitter much 
 REM # SECURE mgmt systems
-REM # Created: 14 June 2016    Edited: 1 May 2017
-REM # Version 0.9
+REM # Created: 14 June 2016    Edited: 20 May 2017
+REM # Version 1.0
 REM #################################################
 REM ### features to add/update
 REM 1. check for workgroup/domain
@@ -37,8 +37,8 @@ REG add "HKCU\Software\Policies\Microsoft\MMC\{8FC0B734-A0E1-11D1-A7D3-0000F8757
 echo Backing up current rules to c:\windows\temp\firewallbak.wfw
 netsh advfirewall export c:\windows\temp\firewallbak.wfw
 ping 127.0.0.1 -n 3 > nul
-netsh advfirewall reset
 netsh advfirewall set allprofiles state on
+netsh advfirewall reset
 netsh advfirewall firewall delete rule name=all
 
 echo Blocking all inbound and outbound traffic.
