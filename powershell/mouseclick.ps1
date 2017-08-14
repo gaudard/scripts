@@ -1,27 +1,30 @@
 ###########
 # Moves mouse to coords, and clicks then loops.
-#
-# mouse click function from: http://stackoverflow.com/questions/12125959/power-shell-how-to-send-middle-mouse-click
-#
+# Mouse click function from: http://stackoverflow.com/questions/12125959/power-shell-how-to-send-middle-mouse-click          
+# Requires some trial and error with the cords.
+# 
 ##########
+
+[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing")
+[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")
 
 function Click-MouseButton
 {
 param(
-[string]$Button, 
+[string]$Button,
 [switch]$help)
 $HelpInfo = @'
 
 Function : Click-MouseButton
 By       : John Bartels
-Date     : 12/16/2012 
+Date     : 12/16/2012
 Purpose  : Clicks the Specified Mouse Button
 Usage    : Click-MouseButton [-Help][-Button x]
-           where      
+           where
                   -Help         displays this help
                   -Button       specify the Button You Wish to Click {left, middle, right}
 
-'@ 
+'@
 
 if ($help -or (!$Button))
 {
@@ -30,12 +33,12 @@ if ($help -or (!$Button))
 }
 else
 {
-    $signature=@' 
+    $signature=@'
       [DllImport("user32.dll",CharSet=CharSet.Auto, CallingConvention=CallingConvention.StdCall)]
       public static extern void mouse_event(long dwFlags, long dx, long dy, long cButtons, long dwExtraInfo);
-'@ 
+'@
 
-    $SendMouseClick = Add-Type -memberDefinition $signature -name "Win32MouseEventNew" -namespace Win32Functions -passThru 
+    $SendMouseClick = Add-Type -memberDefinition $signature -name "Win32MouseEventNew" -namespace Win32Functions -passThru
     if($Button -eq "left")
     {
         $SendMouseClick::mouse_event(0x00000002, 0, 0, 0, 0);
@@ -56,16 +59,16 @@ else
 }
 
 while ($true) {
+    sleep(2)
     [System.Windows.Forms.Cursor]::Position = New-Object System.Drawing.Point(727,244)
     Click-MouseButton -Button Left
-    sleep(5)
-    [System.Windows.Forms.Cursor]::Position = New-Object System.Drawing.Point(945,200)
+    sleep(2)
+    [System.Windows.Forms.Cursor]::Position = New-Object System.Drawing.Point(845,330)
     Click-MouseButton -Button Left
-    sleep(5)
-    [System.Windows.Forms.Cursor]::Position = New-Object System.Drawing.Point(104,86)
+    sleep(2)
+    [System.Windows.Forms.Cursor]::Position = New-Object System.Drawing.Point(144,106)
     Click-MouseButton -Button Left
-    sleep(5)
-    [System.Windows.Forms.Cursor]::Position = New-Object System.Drawing.Point(59,126)
+    sleep(2)
+    [System.Windows.Forms.Cursor]::Position = New-Object System.Drawing.Point(650,390)
     Click-MouseButton -Button Left
-    sleep(10
-    } 
+    }
