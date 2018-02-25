@@ -1,0 +1,5 @@
+## Filter Netstat
+https://blogs.technet.microsoft.com/heyscriptingguy/2015/08/19/parsing-netstat-information-with-powershell-5/
+
+$a = netstat -anop tcp
+$a[3..$a.count] | ConvertFrom-String | select p3,p4,p5,p6 | where p5 -eq "established"
