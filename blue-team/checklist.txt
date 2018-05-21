@@ -41,6 +41,8 @@
             frame matches X-Malware
         ii. CobaltStrike Packet Length
             frame.len == 251
+        iii. CobaltStrike Flags
+            syn, ecn, cwr
             
             
     
