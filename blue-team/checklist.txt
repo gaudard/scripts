@@ -50,6 +50,14 @@
 
 
 2. Find Host Activity
+    A. Remote Tools
+        i. for /f %a in (hosts.txt) do (psexec.exe \\%a -u user -p password cmd /c tasklist) > %a.tasklist.txt
+        ii. for /f %a in (hosts.txt) do (psexec.exe \\%a -u user -p password cmd /c netstat -anobp tcp) > %a.netstat.txt
+    B. Local Tools
+        i. netstat -anop tcp 4
+        ii. Wireshark
+        iii. autoruns
+        iv. procexp
 
 
 
