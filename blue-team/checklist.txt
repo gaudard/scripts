@@ -6,6 +6,8 @@
 #   https://www.sans.org/reading-room/whitepapers/incident/practical-incident-response-network-based-attack-37920
 #   https://github.com/rsmudge/Malleable-C2-Profiles
 #   https://www.forensicswiki.org/wiki/Prefetch
+#   https://www.sans.org/reading-room/whitepapers/incident/windows-responders-guide-1120
+#   https://digital-forensics.sans.org/blog/tags/sysinternals
 #
 ####################################################
 
