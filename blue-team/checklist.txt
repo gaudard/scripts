@@ -8,6 +8,7 @@
 #   https://www.forensicswiki.org/wiki/Prefetch
 #   https://www.sans.org/reading-room/whitepapers/incident/windows-responders-guide-1120
 #   https://digital-forensics.sans.org/blog/tags/sysinternals
+#   https://blog.cylance.com/windows-registry-persistence-part-2-the-run-keys-and-search-order
 #
 ####################################################
 
@@ -69,6 +70,32 @@
         ii. Wireshark
         iii. autoruns
         iv. procexp
+    C. Check for Persistence
+        i. SCHTASKS /Query /FO list /v
+    D. Registry Persitence
+        i. reg query
+            HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\BootExecute
+            HKLM\System\CurrentControlSet\Services
+            HKLM\Software\Microsoft\Windows\CurrentVersion\RunServicesOnce
+            HKCU\Software\Microsoft\Windows\CurrentVersion\RunServicesOnce
+            HKLM\Software\Microsoft\Windows\CurrentVersion\RunServices
+            HKCU\Software\Microsoft\Windows\CurrentVersion\RunServices
+            HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\Notify
+            HKLM\Software\Microsoft\Windows NT\CurrentVersion\Winlogon\Userinit
+            HKCU\Software\Microsoft\Windows NT\CurrentVersion\Winlogon\\Shell
+            HKLM\Software\Microsoft\Windows NT\CurrentVersion\Winlogon\\Shell
+            HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\ShellServiceObjectDelayLoad
+            HKLM\Software\Microsoft\Windows\CurrentVersion\RunOnce
+            HKLM\Software\Microsoft\Windows\CurrentVersion\RunOnceEx
+            HKLM\Software\Microsoft\Windows\CurrentVersion\Run
+            HKCU\Software\Microsoft\Windows\CurrentVersion\Run
+            HKCU\Software\Microsoft\Windows\CurrentVersion\RunOnce
+            HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer\Run
+            HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer\Run
+            HKCU\Software\Microsoft\Windows NT\CurrentVersion\Windows\load
+            HKLM\Software\Microsoft\Windows NT\CurrentVersion\Windows
+            HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\SharedTaskScheduler (XP, NT, W2k only)
+            HKLM\Software\Microsoft\Windows NT\CurrentVersion\Windows\\AppInit_DLLs
 
 
 
