@@ -46,7 +46,8 @@
         i. CobaltStrike Trial - Contains EICAR test string
             frame matches EICAR
             frame matches X-Malware
-        ii. CobaltStrike Packet Length
+        ii. frame.len <= 300  ## probably catches most
+            CobaltStrike Packet Length
             frame.len == 251
             Powershell Empire Packet Length
             frame.len == 269
