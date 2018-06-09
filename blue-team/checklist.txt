@@ -1,9 +1,8 @@
 ####################################################
 #
-#    Check List for Blue Teaming!
+#   Check List for Blue Teaming!
 #
-# Resources:
-
+#   ***** Resources ***** 
 #   https://www.sans.org/reading-room/whitepapers/incident/practical-incident-response-network-based-attack-37920
 #   https://github.com/rsmudge/Malleable-C2-Profiles
 #   https://www.forensicswiki.org/wiki/Prefetch
@@ -11,6 +10,7 @@
 #   https://digital-forensics.sans.org/blog/tags/sysinternals
 #   https://blog.cylance.com/windows-registry-persistence-part-2-the-run-keys-and-search-order
 #   https://www.bro.org/brocon2017/slides/persistent_threats.pdf
+#   https://401trg.com/an-introduction-to-smb-for-network-security-analysts/
 #
 ####################################################
 
@@ -61,7 +61,10 @@
             frame.len == 269
         iii. CobaltStrike Flags syn, ecn, cwr
             tcp.flags.syn == 1 && tcp.flags.ecn == 1 && tcp.flags.cwr == 1
-            
+        iv. Find PSEXEC *untested
+            smb && frame contains ADMIN$
+            smb && frame contains IPC$
+            smb && frame contains PowerShell
             
             
     
