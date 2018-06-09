@@ -9,6 +9,7 @@
 #   https://www.sans.org/reading-room/whitepapers/incident/windows-responders-guide-1120
 #   https://digital-forensics.sans.org/blog/tags/sysinternals
 #   https://blog.cylance.com/windows-registry-persistence-part-2-the-run-keys-and-search-order
+#   https://www.bro.org/brocon2017/slides/persistent_threats.pdf
 #
 ####################################################
 
