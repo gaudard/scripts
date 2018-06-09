@@ -3,6 +3,7 @@
 #    Check List for Blue Teaming!
 #
 # Resources:
+
 #   https://www.sans.org/reading-room/whitepapers/incident/practical-incident-response-network-based-attack-37920
 #   https://github.com/rsmudge/Malleable-C2-Profiles
 #   https://www.forensicswiki.org/wiki/Prefetch
@@ -13,14 +14,17 @@
 #
 ####################################################
 
+
 1. Find Network Activity
     A. User Agents:  Wireshark Filter: http.user_agent
         i. CobaltStrike Malleable C2 - https://github.com/rsmudge/Malleable-C2-Profiles
             1. Amazon - "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko"
             2. Bing - "Mozilla/5.0 (compatible, MSIE 11, Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko"
-                      "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko"
+
+"Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko"
             3. CNN Video - "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko"
-            4. Google Drive - "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko"
+
+4. Google Drive - "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko"
             5. Microsoft Update - "Windows-Update-Agent/10.0.10011.16384 Client-Protocol/1.40"
             6. MSNBC Video - "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko"
             7. OSCP - "Microsoft-CryptoAPI/6.1"
@@ -31,7 +35,8 @@
             12. Wikipedia - "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko"
             13. Fiesta - "Mozilla/4.0 (compatible; MSIE 6.0b; Windows NT 5.0; .NET CLR 1.0.2914)"
                           "Mozilla/5.0 (Windows NT 6.1; rv:24.0) Gecko/20100101 Firefox/24.0"
-            14. Fiesta2 - "Mozilla/4.0 (Windows 7 6.1) Java/1.7.0_11"
+
+14. Fiesta2 - "Mozilla/4.0 (Windows 7 6.1) Java/1.7.0_11"
             15. Magitude - "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)"
             16. Zeus - "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; SV1)"
             17. Havex - "Mozilla/4.0 (compatible; MSIE 6.0;Windows NT 5.1)";
@@ -42,6 +47,7 @@
             20. String_Of_Paerls - "Mozilla/4.0"
             21. Taidoor - "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)"
         ii Powershell Empire
+
             1. "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0)"
                 GET /login/process.php
     B. Misc Wireshark Filters
@@ -71,6 +77,7 @@
         ii. Wireshark
         iii. autoruns
         iv. procexp
+        v. wmic process get processid,parentprocessid,executablepath,name,commandline
     C. Check for Persistence
         i. SCHTASKS /Query /FO list /v
     D. Registry Persitence
