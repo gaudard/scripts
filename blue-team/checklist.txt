@@ -63,6 +63,8 @@
             smb && frame contains ADMIN$
             smb && frame contains IPC$
             smb && frame contains PowerShell
+        v. Find DNS Beacons
+            dns && frame.len > 90
     C. Bro
         i. bro-cut host < http.log | sort | uniq -c | sort -n | tail -n 10  ## top hosts
         ii. bro-cut user_agent < http.log | sort -u     ## user agents
