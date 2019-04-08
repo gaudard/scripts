@@ -71,7 +71,7 @@ REM ## allow rules, must remove "REM" to enable rule."
 REM netsh advfirewall firewall add rule name="RDP" dir=out action=allow protocol=TCP remoteport=3389
 REM netsh advfirewall firewall add rule name="SSH" dir=out action=allow protocol=TCP remoteport=22
 REM netsh advfirewall firewall add rule name="SMB" dir=out action=allow protocol=TCP remoteport=445
-REM netsh advfirewall firewall add rule name="website dir=out action=allow protocol=tcp remoteport=443 remoteip=1.2.3.4
+REM netsh advfirewall firewall add rule name="website" dir=out action=allow protocol=tcp remoteport=443 remoteip=1.2.3.4
 
 REM ### Allows active directory and exchange communication, directly from host to ip of server. ###
 REM netsh advfirewall firewall add rule name="Domain Comms - TCP - outbound" dir=out action=allow protocol=TCP remoteport=389,636,3268,3269,88,53,445,25,135,5722,464,9389,139 remoteip=1.2.3.4
